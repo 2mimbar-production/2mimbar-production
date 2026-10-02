@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ImagePlus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { type Laporan, PLATFORM, STATUS_EPISODE, hariIni } from "@/lib/produksi";
 import { useSimpan } from "@/lib/useSimpan";
+import { hapusGambar, unggahGambar } from "@/lib/gambar";
 import { Input, Select, Textarea } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
 import { Label, Modal, PesanError } from "./ui";
@@ -41,7 +42,11 @@ export default function LaporanForm({
     return Object.fromEntries(FIELD.map((k) => [k, String((awal as any)?.[k] ?? bawaan[k] ?? dasar[k] ?? "")]));
   });
   const [mengunggah, setMengunggah] = useState(false);
+  // Screenshot yang sudah diunggah di sesi form ini tapi belum disimpan.
+  // Dihapus lagi dari storage kalau diganti atau form dibatalkan.
+  const unggahanBaru = useRef<string | null>(null);
   const { jalankan, loading, error, setError } = useSimpan();
+  const supabase = createClient();
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
   const program = proyek.find((p) => p.id === form.proyek_id);
@@ -56,43 +61,59 @@ export default function LaporanForm({
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Ukuran gambar maksimal 5 MB.");
+    if (file.size > 20 * 1024 * 1024) {
+      setError("Ukuran gambar maksimal 20 MB.");
       return;
     }
     setMengunggah(true);
     setError(null);
-    const supabase = createClient();
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `${form.proyek_id || "umum"}/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("bukti-tayang").upload(path, file, { contentType: file.type });
+    const { url, error } = await unggahGambar(supabase, "bukti-tayang", form.proyek_id || "umum", file);
     setMengunggah(false);
-    if (error) {
-      setError(`Gagal mengunggah: ${error.message}`);
+    if (error || !url) {
+      setError(`Gagal mengunggah: ${error}`);
       return;
     }
-    const { data } = supabase.storage.from("bukti-tayang").getPublicUrl(path);
-    setForm((f) => ({ ...f, bukti_url: data.publicUrl }));
+    if (unggahanBaru.current) hapusGambar(supabase, unggahanBaru.current);
+    unggahanBaru.current = url;
+    setForm((f) => ({ ...f, bukti_url: url }));
+  }
+
+  function hapusScreenshot() {
+    if (unggahanBaru.current === form.bukti_url) {
+      hapusGambar(supabase, unggahanBaru.current);
+      unggahanBaru.current = null;
+    }
+    setForm((f) => ({ ...f, bukti_url: "" }));
+  }
+
+  function batal() {
+    if (unggahanBaru.current) hapusGambar(supabase, unggahanBaru.current);
+    onClose();
   }
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     const data = Object.fromEntries(Object.entries(form).map(([k, v]) => [k, v.trim() === "" ? null : v.trim()]));
-    const supabase = createClient();
     const ok = await jalankan(() =>
       awal ? supabase.from("laporan").update(data).eq("id", awal.id) : supabase.from("laporan").insert(data)
     );
-    if (ok) onClose();
+    if (!ok) return;
+    // Screenshot lama yang diganti/dihapus tidak dipakai lagi.
+    if (awal?.bukti_url && awal.bukti_url !== data.bukti_url) hapusGambar(supabase, awal.bukti_url);
+    unggahanBaru.current = null;
+    onClose();
   }
 
   async function hapus() {
     if (!awal || !confirm("Hapus episode ini dari laporan?")) return;
-    const supabase = createClient();
-    if (await jalankan(() => supabase.from("laporan").delete().eq("id", awal.id))) onClose();
+    if (!(await jalankan(() => supabase.from("laporan").delete().eq("id", awal.id)))) return;
+    hapusGambar(supabase, awal.bukti_url);
+    if (unggahanBaru.current) hapusGambar(supabase, unggahanBaru.current);
+    onClose();
   }
 
   return (
-    <Modal judul={awal ? "Ubah episode" : "Catat episode"} onClose={onClose}>
+    <Modal judul={awal ? "Ubah episode" : "Catat episode"} onClose={batal}>
       <form onSubmit={submit} className="grid grid-cols-2 gap-3">
         <Label teks="Program" className="col-span-2">
           <Select required value={form.proyek_id} onChange={pilihProgram}>
@@ -144,7 +165,7 @@ export default function LaporanForm({
               </a>
               <button
                 type="button"
-                onClick={() => setForm((f) => ({ ...f, bukti_url: "" }))}
+                onClick={hapusScreenshot}
                 className="absolute -right-2 -top-2 rounded-full bg-white p-1 text-muted shadow hover:text-red-600"
                 aria-label="Hapus screenshot"
               >
@@ -154,7 +175,7 @@ export default function LaporanForm({
           ) : (
             <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-denim-100 px-3 py-3 text-sm text-muted hover:border-denim-300">
               <ImagePlus size={16} />
-              {mengunggah ? "Mengunggah..." : "Unggah gambar (maks. 5 MB)"}
+              {mengunggah ? "Mengunggah..." : "Unggah gambar (otomatis dikecilkan)"}
               <input type="file" accept="image/*" className="hidden" onChange={unggahBukti} disabled={mengunggah} />
             </label>
           )}
@@ -171,7 +192,7 @@ export default function LaporanForm({
                 Hapus
               </Button>
             )}
-            <Button type="button" variant="secondary" onClick={onClose} className="ml-auto">
+            <Button type="button" variant="secondary" onClick={batal} className="ml-auto">
               Batal
             </Button>
             <Button type="submit" disabled={loading || mengunggah}>

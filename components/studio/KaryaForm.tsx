@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { type Karya, KATEGORI_KARYA, slugify, thumbnailDari } from "@/lib/produksi";
 import { useSimpan } from "@/lib/useSimpan";
+import { hapusGambar, unggahGambar } from "@/lib/gambar";
 import { Input, Textarea } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
 import { Label, Modal, PesanError } from "./ui";
@@ -18,6 +19,8 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
   const [unggulan, setUnggulan] = useState(awal?.unggulan ?? false);
   const [slugManual, setSlugManual] = useState(Boolean(awal));
   const [mengunggah, setMengunggah] = useState(false);
+  // Cover yang diunggah di sesi form ini tapi belum disimpan.
+  const unggahanBaru = useRef<string | null>(null);
   const { jalankan, loading, error, setError } = useSimpan();
   const supabase = createClient();
 
@@ -29,22 +32,35 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
   async function unggahCover(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      setError("Ukuran gambar maksimal 5 MB.");
+    e.target.value = "";
+    if (file.size > 20 * 1024 * 1024) {
+      setError("Ukuran gambar maksimal 20 MB.");
       return;
     }
     setMengunggah(true);
     setError(null);
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `cover/${crypto.randomUUID()}.${ext}`;
-    const { error } = await supabase.storage.from("portofolio").upload(path, file, { contentType: file.type });
+    const { url, error } = await unggahGambar(supabase, "portofolio", "cover", file);
     setMengunggah(false);
-    if (error) {
-      setError(`Gagal mengunggah: ${error.message}`);
+    if (error || !url) {
+      setError(`Gagal mengunggah: ${error}`);
       return;
     }
-    const { data } = supabase.storage.from("portofolio").getPublicUrl(path);
-    setForm((f) => ({ ...f, cover_url: data.publicUrl }));
+    if (unggahanBaru.current) hapusGambar(supabase, unggahanBaru.current);
+    unggahanBaru.current = url;
+    setForm((f) => ({ ...f, cover_url: url }));
+  }
+
+  function hapusCover() {
+    if (unggahanBaru.current === form.cover_url) {
+      hapusGambar(supabase, unggahanBaru.current);
+      unggahanBaru.current = null;
+    }
+    setForm((f) => ({ ...f, cover_url: "" }));
+  }
+
+  function batal() {
+    if (unggahanBaru.current) hapusGambar(supabase, unggahanBaru.current);
+    onClose();
   }
 
   async function submit(e: React.FormEvent) {
@@ -65,18 +81,24 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
     const ok = await jalankan(() =>
       awal ? supabase.from("karya").update(data).eq("id", awal.id) : supabase.from("karya").insert(data)
     );
-    if (ok) onClose();
+    if (!ok) return;
+    if (awal?.cover_url && awal.cover_url !== (form.cover_url.trim() || null)) hapusGambar(supabase, awal.cover_url);
+    unggahanBaru.current = null;
+    onClose();
   }
 
   async function hapus() {
     if (!awal || !confirm(`Hapus "${awal.judul}" dari portofolio?`)) return;
-    if (await jalankan(() => supabase.from("karya").delete().eq("id", awal.id))) onClose();
+    if (!(await jalankan(() => supabase.from("karya").delete().eq("id", awal.id)))) return;
+    hapusGambar(supabase, awal.cover_url);
+    if (unggahanBaru.current) hapusGambar(supabase, unggahanBaru.current);
+    onClose();
   }
 
   const preview = thumbnailDari({ cover_url: form.cover_url || null, video_url: form.video_url || null });
 
   return (
-    <Modal judul={awal ? "Ubah karya" : "Karya baru"} onClose={onClose}>
+    <Modal judul={awal ? "Ubah karya" : "Karya baru"} onClose={batal}>
       <form onSubmit={submit} className="grid grid-cols-2 gap-3">
         <Label teks="Judul" className="col-span-2">
           <Input required value={form.judul} onChange={set("judul")} />
@@ -130,7 +152,7 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
                 {mengunggah ? "Mengunggah..." : "Tanpa cover, thumbnail YouTube dipakai otomatis."}
               </p>
               {form.cover_url && (
-                <button type="button" className="text-xs text-red-600 hover:underline" onClick={() => setForm((f) => ({ ...f, cover_url: "" }))}>
+                <button type="button" className="text-xs text-red-600 hover:underline" onClick={hapusCover}>
                   Hapus cover
                 </button>
               )}
@@ -158,7 +180,7 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
                 Hapus
               </Button>
             )}
-            <Button type="button" variant="secondary" onClick={onClose} className="ml-auto">
+            <Button type="button" variant="secondary" onClick={batal} className="ml-auto">
               Batal
             </Button>
             <Button type="submit" disabled={loading || mengunggah}>
