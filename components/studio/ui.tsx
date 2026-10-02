@@ -64,7 +64,7 @@ export function Modal({
 
 export function Label({ teks, children, className = "" }: { teks: string; children: React.ReactNode; className?: string }) {
   return (
-    <label className={`block ${className}`}>
+    <label className={`block min-w-0 ${className}`}>
       <span className="mb-1 block text-xs text-muted">{teks}</span>
       {children}
     </label>
@@ -81,6 +81,8 @@ const NADA: Record<string, string> = {
   terjadwal: "bg-denim-50 text-denim-700",
   berjalan: "bg-amber-50 text-amber-700",
   ditunda: "bg-red-50 text-red-600",
+  tayang: "bg-emerald-50 text-emerald-700",
+  dikerjakan: "bg-amber-50 text-amber-700",
 };
 
 export function Badge({ nilai, label }: { nilai: string; label?: string }) {

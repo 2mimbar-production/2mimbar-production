@@ -26,7 +26,7 @@ export default function ProyekAksi({ proyek }: { proyek: Proyek }) {
   }
 
   async function hapus() {
-    if (!confirm(`Hapus proyek "${proyek.nama}"? Jadwalnya ikut terhapus, laporan tetap disimpan tanpa proyek.`)) return;
+    if (!confirm(`Hapus program "${proyek.nama}"? Jadwalnya ikut terhapus, episode di laporan tetap disimpan tanpa program.`)) return;
     if (await jalankan(() => supabase.from("proyek").delete().eq("id", proyek.id))) router.push("/studio/proyek");
   }
 
@@ -38,7 +38,7 @@ export default function ProyekAksi({ proyek }: { proyek: Proyek }) {
           disabled={loading}
           onChange={(e) => gantiStatus(e.target.value)}
           className="!w-auto"
-          aria-label="Status proyek"
+          aria-label="Status program"
         >
           {STATUS_PROYEK.map((s) => (
             <option key={s.value} value={s.value}>

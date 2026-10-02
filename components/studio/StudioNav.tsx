@@ -7,7 +7,7 @@ import LogoutButton from "@/components/LogoutButton";
 
 const NAV = [
   { href: "/studio", label: "Ringkasan", icon: LayoutDashboard },
-  { href: "/studio/proyek", label: "Proyek", icon: FolderKanban },
+  { href: "/studio/proyek", label: "Program", icon: FolderKanban },
   { href: "/studio/jadwal", label: "Jadwal", icon: CalendarDays },
   { href: "/studio/laporan", label: "Laporan", icon: NotebookPen },
   { href: "/studio/portofolio", label: "Portofolio", icon: Clapperboard },

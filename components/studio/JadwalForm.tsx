@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { type Jadwal, STATUS_JADWAL, TAHAP_JADWAL, hariIni } from "@/lib/produksi";
+import { type Jadwal, type Kanal, STATUS_JADWAL, TAHAP_JADWAL, hariIni } from "@/lib/produksi";
 import { useSimpan } from "@/lib/useSimpan";
 import { Input, Select, Textarea } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
 import { Label, Modal, PesanError } from "./ui";
 
-export type ProyekOpsi = { id: string; nama: string; status?: string };
+export type ProyekOpsi = { id: string; nama: string; status?: string; kanal?: Kanal[] };
 
 /** Proyek yang selesai/batal disembunyikan dari pilihan, kecuali sedang terpilih. */
 export function opsiTerpilih(proyek: ProyekOpsi[], terpilih: string) {
