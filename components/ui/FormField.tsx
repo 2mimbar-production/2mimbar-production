@@ -3,8 +3,15 @@ import { InputHTMLAttributes, SelectHTMLAttributes, TextareaHTMLAttributes } fro
 const FIELD_CLASS =
   "w-full rounded-lg border border-denim-100 px-3 py-2 text-sm outline-none focus:border-denim-500";
 
-export function Input({ className = "", ...rest }: InputHTMLAttributes<HTMLInputElement>) {
-  return <input className={`${FIELD_CLASS} ${className}`} {...rest} />;
+// Safari iPad memberi input tanggal lebar minimum & latar abu-abu bawaan,
+// sehingga kolomnya meluber keluar grid. appearance-none mengembalikannya
+// ke gaya field biasa; picker tanggal tetap muncul saat diketuk.
+const TANGGAL_CLASS =
+  "min-w-0 appearance-none bg-white min-h-[38px] text-left [&::-webkit-date-and-time-value]:text-left";
+
+export function Input({ className = "", type, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
+  const tanggal = type === "date" || type === "month" || type === "time";
+  return <input type={type} className={`${FIELD_CLASS} ${tanggal ? TANGGAL_CLASS : ""} ${className}`} {...rest} />;
 }
 
 export function Textarea({ className = "", ...rest }: TextareaHTMLAttributes<HTMLTextAreaElement>) {

@@ -30,8 +30,14 @@ export type Proyek = {
   pic: string | null;
   catatan: string | null;
   karya_id: string | null;
+  kanal: Kanal[];
+  jadwal_tayang: string | null;
+  target_episode: number | null;
   created_at: string;
 };
+
+/** Satu tempat tayang program, mis. YouTube "Hikayat Podcast". */
+export type Kanal = { platform: string; nama: string; link: string };
 
 export type TahapJadwal = "praproduksi" | "produksi" | "pascaproduksi" | "review" | "rilis" | "lainnya";
 export type StatusJadwal = "terjadwal" | "berjalan" | "selesai" | "ditunda";
@@ -50,16 +56,48 @@ export type Jadwal = {
   catatan: string | null;
 };
 
+export type StatusEpisode = "dikerjakan" | "tayang";
+
+/** Satu baris laporan = satu episode yang dikerjakan atau sudah tayang. */
 export type Laporan = {
   id: string;
   tanggal: string;
   proyek_id: string | null;
-  dikerjakan: string;
-  hasil: string | null;
-  kendala: string | null;
-  rencana: string | null;
+  episode: string | null;
+  judul: string | null;
+  status: StatusEpisode;
+  platform: string | null;
+  link_tayang: string | null;
+  bukti_url: string | null;
+  catatan: string | null;
+  // Kolom format lama (catatan kerja harian), hanya untuk data lama.
+  dikerjakan: string | null;
   created_at: string;
 };
+
+export const STATUS_EPISODE: { value: StatusEpisode; label: string }[] = [
+  { value: "tayang", label: "Sudah tayang" },
+  { value: "dikerjakan", label: "Dikerjakan" },
+];
+
+export const PLATFORM = [
+  "YouTube",
+  "Spotify",
+  "Instagram",
+  "TikTok",
+  "Facebook",
+  "Apple Podcasts",
+  "Website",
+  "TV",
+  "Radio",
+  "Lainnya",
+];
+
+/** Judul tampilan episode, termasuk data format lama. */
+export function judulEpisode(l: Pick<Laporan, "episode" | "judul" | "dikerjakan">) {
+  const judul = l.judul ?? l.dikerjakan?.split("\n")[0] ?? "Tanpa judul";
+  return l.episode ? `${l.episode} · ${judul}` : judul;
+}
 
 export const KATEGORI_KARYA = [
   "Video",

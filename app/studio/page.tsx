@@ -31,7 +31,11 @@ export default async function StudioHome() {
         .lte("tanggal", tambahHari(today, 7))
         .order("tanggal"),
       supabase.from("laporan").select("*").order("tanggal", { ascending: false }).order("created_at", { ascending: false }).limit(3),
-      supabase.from("laporan").select("id", { count: "exact", head: true }).gte("tanggal", `${today.slice(0, 7)}-01`),
+      supabase
+        .from("laporan")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "tayang")
+        .gte("tanggal", `${today.slice(0, 7)}-01`),
       supabase.from("karya").select("id", { count: "exact", head: true }).eq("terbit", true),
     ]);
 
@@ -39,14 +43,13 @@ export default async function StudioHome() {
   const aktif = semua.filter((p) => PROYEK_AKTIF.includes(p.status));
   const telat = aktif.filter((p) => p.tenggat && p.tenggat < today);
   const selesaiTahunIni = semua.filter((p) => p.status === "selesai" && p.tanggal_selesai?.startsWith(today.slice(0, 4)));
-  const opsi = semua.map((p) => ({ id: p.id, nama: p.nama, status: p.status }));
-  const sudahLaporHariIni = ((laporan ?? []) as Laporan[]).some((l) => l.tanggal === today);
+  const opsi = semua.map((p) => ({ id: p.id, nama: p.nama, status: p.status, kanal: p.kanal }));
 
   const angka = [
-    { n: aktif.length, label: "proyek berjalan", href: "/studio/proyek" },
+    { n: aktif.length, label: "program berjalan", href: "/studio/proyek" },
     { n: (jadwal ?? []).length, label: "jadwal 7 hari ke depan", href: "/studio/jadwal" },
-    { n: laporanBulanIni ?? 0, label: "laporan bulan ini", href: "/studio/laporan" },
-    { n: selesaiTahunIni.length, label: `proyek selesai ${today.slice(0, 4)}`, href: "/studio/proyek" },
+    { n: laporanBulanIni ?? 0, label: "episode tayang bulan ini", href: "/studio/laporan" },
+    { n: selesaiTahunIni.length, label: `program selesai ${today.slice(0, 4)}`, href: "/studio/proyek" },
     { n: karyaTerbit ?? 0, label: "karya di portofolio", href: "/studio/portofolio" },
   ];
 
@@ -58,16 +61,10 @@ export default async function StudioHome() {
         aksi={
           <>
             <TombolTambah jenis="jadwal" label="Jadwal" variant="secondary" proyek={opsi} />
-            <TombolTambah jenis="laporan" label="Laporan" proyek={opsi} />
+            <TombolTambah jenis="laporan" label="Episode" proyek={opsi} />
           </>
         }
       />
-
-      {!sudahLaporHariIni && (
-        <p className="mb-6 rounded-2xl bg-gold-400/15 px-4 py-3 text-sm text-denim-900">
-          Belum ada laporan untuk hari ini.
-        </p>
-      )}
 
       <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-5">
         {angka.map((a) => (
@@ -91,15 +88,15 @@ export default async function StudioHome() {
 
         <section>
           <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-lg text-denim-700">Proyek berjalan</h2>
+            <h2 className="font-display text-lg text-denim-700">Program berjalan</h2>
             <Link href="/studio/proyek" className="text-sm text-denim-500 hover:underline">
               Semua
             </Link>
           </div>
-          {telat.length > 0 && <p className="mb-2 text-sm text-red-600">{telat.length} proyek melewati tenggat.</p>}
+          {telat.length > 0 && <p className="mb-2 text-sm text-red-600">{telat.length} program melewati tenggat.</p>}
           {aktif.length === 0 ? (
             <p className="rounded-2xl border border-dashed border-denim-100 py-10 text-center text-sm text-muted">
-              Tidak ada proyek yang sedang berjalan.
+              Tidak ada program yang sedang berjalan.
             </p>
           ) : (
             <ul className="divide-y divide-denim-100 overflow-hidden rounded-2xl border border-denim-100 bg-white">
@@ -123,9 +120,9 @@ export default async function StudioHome() {
 
       <section className="mt-10">
         <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="font-display text-lg text-denim-700">Laporan terakhir</h2>
+          <h2 className="font-display text-lg text-denim-700">Episode terakhir</h2>
           <Link href="/studio/laporan" className="text-sm text-denim-500 hover:underline">
-            Semua laporan
+            Laporan bulanan
           </Link>
         </div>
         <LaporanList laporan={(laporan ?? []) as Laporan[]} proyek={opsi} />

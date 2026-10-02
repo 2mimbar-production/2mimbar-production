@@ -26,11 +26,11 @@ export default function ProyekBoard({ proyek }: { proyek: Proyek[] }) {
   return (
     <>
       <PageHeader
-        judul="Proyek"
-        sub="Semua pekerjaan produksi, dari ide sampai selesai."
+        judul="Program"
+        sub="Program dan IP yang diproduksi, dari ide sampai selesai."
         aksi={
           <Button onClick={() => setFormBuka(true)} className="flex items-center gap-1.5">
-            <Plus size={16} /> Proyek baru
+            <Plus size={16} /> Program baru
           </Button>
         }
       />
@@ -50,7 +50,7 @@ export default function ProyekBoard({ proyek }: { proyek: Proyek[] }) {
       </div>
 
       {tampil.length === 0 ? (
-        <EmptyState message="Belum ada proyek di kelompok ini." />
+        <EmptyState message="Belum ada program di kelompok ini." />
       ) : (
         <ul className="divide-y divide-denim-100 overflow-hidden rounded-2xl border border-denim-100 bg-white">
           {tampil.map((p) => {
@@ -61,7 +61,9 @@ export default function ProyekBoard({ proyek }: { proyek: Proyek[] }) {
                   <div className="min-w-0 flex-1">
                     <p className="truncate font-medium text-denim-900">{p.nama}</p>
                     <p className="truncate text-xs text-muted">
-                      {[p.klien, p.jenis, p.pic && `PIC ${p.pic}`].filter(Boolean).join(" · ") || "Tanpa keterangan"}
+                      {[p.jenis, ...(p.kanal ?? []).map((k) => (k.nama ? `${k.platform} ${k.nama}` : k.platform)), p.pic && `PIC ${p.pic}`]
+                        .filter(Boolean)
+                        .join(" · ") || "Tanpa keterangan"}
                     </p>
                   </div>
                   <div className="hidden text-right sm:block">
