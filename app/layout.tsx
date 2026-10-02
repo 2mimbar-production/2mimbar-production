@@ -1,0 +1,26 @@
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import RegisterServiceWorker from "@/components/RegisterServiceWorker";
+
+const inter = Inter({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-inter",
+});
+
+export const metadata: Metadata = {
+  title: "Duamimbar Produksi",
+  description: "Portofolio karya media Divisi Produksi Duamimbar.",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="id">
+      <body className={`${inter.variable} font-sans bg-surface text-denim-900 antialiased`}>
+        <RegisterServiceWorker />
+        {children}
+      </body>
+    </html>
+  );
+}
