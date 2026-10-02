@@ -24,12 +24,16 @@ as $$
   );
 $$;
 
+-- Hanya user login yang perlu memanggil fungsi ini (lewat RLS & rpc).
+revoke execute on function public.is_anggota_studio() from anon, public;
+grant execute on function public.is_anggota_studio() to authenticated;
+
 drop policy if exists "anggota baca diri" on public.anggota_studio;
 create policy "anggota baca diri" on public.anggota_studio
   for select to authenticated using (public.is_anggota_studio());
 
 create or replace function public.set_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql set search_path = public as $$
 begin
   new.updated_at = now();
   return new;
