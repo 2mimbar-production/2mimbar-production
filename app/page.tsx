@@ -26,7 +26,13 @@ export default async function PortofolioPage() {
     <>
       <section className="relative h-[88vh] min-h-[520px] overflow-hidden bg-denim-900">
         <SiteHeader overlay />
-        <img src="/hero-duamimbar.jpg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-60" />
+        {/* Background div, bukan <img>: Safari iPad tidak selalu meregangkan
+            <img> absolute setinggi section, jadi gambarnya terpotong. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-cover bg-center opacity-60"
+          style={{ backgroundImage: "url(/hero-duamimbar.jpg)" }}
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-denim-900 via-denim-900/30 to-denim-900/50" />
         <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-end px-5 pb-16 sm:px-8 sm:pb-24">
           <p className="text-xs uppercase tracking-[0.25em] text-gold-400">Divisi Produksi</p>
