@@ -14,7 +14,8 @@ import {
 import JadwalList from "@/components/studio/JadwalList";
 import LaporanList from "@/components/studio/LaporanList";
 import TombolTambah from "@/components/studio/TombolTambah";
-import { Badge, PageHeader } from "@/components/studio/ui";
+import { Badge, PageHeader, Panel, Readout, Section, TautanBagian } from "@/components/studio/ui";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 export default async function StudioHome() {
   const today = hariIni();
@@ -42,91 +43,67 @@ export default async function StudioHome() {
   const semua = (proyek ?? []) as Proyek[];
   const aktif = semua.filter((p) => PROYEK_AKTIF.includes(p.status));
   const telat = aktif.filter((p) => p.tenggat && p.tenggat < today);
-  const selesaiTahunIni = semua.filter((p) => p.status === "selesai" && p.tanggal_selesai?.startsWith(today.slice(0, 4)));
   const opsi = semua.map((p) => ({ id: p.id, nama: p.nama, status: p.status, kanal: p.kanal }));
 
   const angka = [
-    { n: aktif.length, label: "program berjalan", href: "/studio/proyek" },
-    { n: (jadwal ?? []).length, label: "jadwal 7 hari ke depan", href: "/studio/jadwal" },
-    { n: laporanBulanIni ?? 0, label: "episode tayang bulan ini", href: "/studio/laporan" },
-    { n: selesaiTahunIni.length, label: `program selesai ${today.slice(0, 4)}`, href: "/studio/proyek" },
-    { n: karyaTerbit ?? 0, label: "karya di portofolio", href: "/studio/portofolio" },
+    { n: aktif.length, label: "Program berjalan", href: "/studio/proyek" },
+    { n: telat.length, label: "Lewat tenggat", href: "/studio/proyek", peringatan: telat.length > 0 },
+    { n: (jadwal ?? []).length, label: "Jadwal 7 hari", href: "/studio/jadwal" },
+    { n: laporanBulanIni ?? 0, label: "Tayang bulan ini", href: "/studio/laporan" },
+    { n: karyaTerbit ?? 0, label: "Karya di situs", href: "/studio/portofolio" },
   ];
 
   return (
     <>
       <PageHeader
+        kicker={formatTanggal(today, { weekday: "long", month: "long" })}
         judul="Ringkasan"
-        sub={formatTanggal(today, { weekday: "long", month: "long" })}
         aksi={
           <>
             <TombolTambah jenis="jadwal" label="Jadwal" variant="secondary" proyek={opsi} />
-            <TombolTambah jenis="laporan" label="Episode" proyek={opsi} />
+            <TombolTambah jenis="laporan" label="Catat episode" proyek={opsi} />
           </>
         }
       />
 
-      <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {angka.map((a) => (
-          <Link key={a.label} href={a.href} className="rounded-2xl border border-denim-100 bg-white p-4 hover:border-denim-300">
-            <p className="font-mono text-2xl text-denim-900">{a.n}</p>
-            <p className="text-xs text-muted">{a.label}</p>
-          </Link>
-        ))}
-      </div>
+      <Readout item={angka} />
 
-      <div className="grid gap-10 lg:grid-cols-2">
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-lg text-denim-700">Minggu ini</h2>
-            <Link href="/studio/jadwal" className="text-sm text-denim-500 hover:underline">
-              Kalender
-            </Link>
-          </div>
+      <div className="mt-10 grid gap-10 lg:grid-cols-5">
+        <Section judul="Minggu ini" jumlah={(jadwal ?? []).length} aksi={<TautanBagian href="/studio/jadwal">Kalender</TautanBagian>} className="lg:col-span-3">
           <JadwalList jadwal={(jadwal ?? []) as Jadwal[]} proyek={opsi} kosong="Tidak ada jadwal dalam 7 hari ke depan." />
-        </section>
+        </Section>
 
-        <section>
-          <div className="mb-3 flex items-baseline justify-between">
-            <h2 className="font-display text-lg text-denim-700">Program berjalan</h2>
-            <Link href="/studio/proyek" className="text-sm text-denim-500 hover:underline">
-              Semua
-            </Link>
-          </div>
-          {telat.length > 0 && <p className="mb-2 text-sm text-red-600">{telat.length} program melewati tenggat.</p>}
+        <Section judul="Program berjalan" jumlah={aktif.length} aksi={<TautanBagian href="/studio/proyek">Semua</TautanBagian>} className="lg:col-span-2">
           {aktif.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-denim-100 py-10 text-center text-sm text-muted">
-              Tidak ada program yang sedang berjalan.
-            </p>
+            <EmptyState message="Tidak ada program yang sedang berjalan." />
           ) : (
-            <ul className="divide-y divide-denim-100 overflow-hidden rounded-2xl border border-denim-100 bg-white">
-              {aktif.slice(0, 6).map((p) => (
-                <li key={p.id}>
-                  <Link href={`/studio/proyek/${p.id}`} className="flex items-center gap-3 px-4 py-3 hover:bg-surface">
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-medium text-denim-900">{p.nama}</p>
-                      <p className={`font-mono text-xs ${p.tenggat && p.tenggat < today ? "text-red-600" : "text-muted"}`}>
-                        {p.tenggat ? `Tenggat ${formatTanggal(p.tenggat)}` : "Tanpa tenggat"}
-                      </p>
-                    </div>
-                    <Badge nilai={p.status} label={labelDari(STATUS_PROYEK, p.status)} />
-                  </Link>
-                </li>
-              ))}
-            </ul>
+            <Panel>
+              <ul className="divide-y divide-line">
+                {aktif.slice(0, 6).map((p) => {
+                  const lewat = Boolean(p.tenggat && p.tenggat < today);
+                  return (
+                    <li key={p.id}>
+                      <Link href={`/studio/proyek/${p.id}`} className="flex items-center gap-3 px-4 py-3 transition-colors hover:bg-paper">
+                        <div className="min-w-0 flex-1">
+                          <p className="truncate text-sm font-medium text-ink">{p.nama}</p>
+                          <p className={`mt-0.5 font-mono text-xs ${lewat ? "text-signal" : "text-ink-3"}`}>
+                            {p.tenggat ? `${lewat ? "Lewat tenggat" : "Tenggat"} ${formatTanggal(p.tenggat)}` : "Tanpa tenggat"}
+                          </p>
+                        </div>
+                        <Badge nilai={p.status} label={labelDari(STATUS_PROYEK, p.status)} />
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Panel>
           )}
-        </section>
+        </Section>
       </div>
 
-      <section className="mt-10">
-        <div className="mb-3 flex items-baseline justify-between">
-          <h2 className="font-display text-lg text-denim-700">Episode terakhir</h2>
-          <Link href="/studio/laporan" className="text-sm text-denim-500 hover:underline">
-            Laporan bulanan
-          </Link>
-        </div>
+      <Section judul="Episode terakhir" aksi={<TautanBagian href="/studio/laporan">Laporan bulanan</TautanBagian>} className="mt-10">
         <LaporanList laporan={(laporan ?? []) as Laporan[]} proyek={opsi} />
-      </section>
+      </Section>
     </>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowDown } from "lucide-react";
 import { createPublicClient } from "@/lib/supabase/public";
 import type { Karya } from "@/lib/produksi";
 import SiteHeader from "@/components/portofolio/SiteHeader";
@@ -24,40 +25,51 @@ export default async function PortofolioPage() {
 
   return (
     <>
-      <section className="relative h-[88vh] min-h-[520px] overflow-hidden bg-denim-900">
+      <section className="relative flex h-[92svh] min-h-[600px] flex-col overflow-hidden bg-brand-900 text-white">
         <SiteHeader overlay />
         {/* Background div, bukan <img>: Safari iPad tidak selalu meregangkan
             <img> absolute setinggi section, jadi gambarnya terpotong. */}
         <div
           aria-hidden
-          className="absolute inset-0 bg-cover bg-center opacity-60"
+          className="absolute inset-0 bg-cover bg-center opacity-55"
           style={{ backgroundImage: "url(/hero-duamimbar.jpg)" }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-denim-900 via-denim-900/30 to-denim-900/50" />
-        <div className="relative mx-auto flex h-full max-w-6xl flex-col justify-end px-5 pb-16 sm:px-8 sm:pb-24">
-          <p className="text-xs uppercase tracking-[0.25em] text-gold-400">Divisi Produksi</p>
-          <h1 className="mt-3 max-w-3xl font-display text-4xl leading-tight text-white sm:text-6xl">
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-900 via-brand-900/50 to-brand-900/30" />
+        <div className="relative mx-auto flex w-full max-w-7xl flex-1 flex-col justify-end px-5 pb-10 sm:px-10 sm:pb-14">
+          <p className="font-mono text-meta uppercase text-white/70">Duamimbar  /  Divisi Produksi</p>
+          <h1 className="font-display mt-5 max-w-5xl text-[3.25rem] leading-[0.92] sm:text-[5.5rem] lg:text-[6.75rem]">
             Karya media Duamimbar, dari naskah sampai tayang.
           </h1>
-          {karya.length > 0 && (
-            <p className="mt-6 font-mono text-sm text-white/70">
-              {karya.length} karya · {kategori} kategori
-            </p>
-          )}
-          <Link
-            href="#karya"
-            className="mt-8 w-fit rounded-full bg-white px-5 py-2.5 text-sm font-medium text-denim-900 hover:bg-gold-400"
-          >
-            Lihat karya
-          </Link>
+          <div className="mt-10 flex flex-wrap items-end justify-between gap-6 border-t border-white/20 pt-6">
+            {karya.length > 0 ? (
+              <dl className="flex gap-10">
+                <div>
+                  <dt className="font-mono text-meta uppercase text-white/60">Karya</dt>
+                  <dd className="font-display mt-1 text-4xl leading-none">{karya.length}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-meta uppercase text-white/60">Kategori</dt>
+                  <dd className="font-display mt-1 text-4xl leading-none">{kategori}</dd>
+                </div>
+              </dl>
+            ) : (
+              <span />
+            )}
+            <Link
+              href="#karya"
+              className="inline-flex h-11 items-center gap-2 rounded bg-white px-5 font-medium text-brand-900 transition-colors hover:bg-brand-50"
+            >
+              Lihat karya <ArrowDown size={16} />
+            </Link>
+          </div>
         </div>
       </section>
 
-      <main className="mx-auto max-w-6xl px-5 sm:px-8">
+      <main className="mx-auto max-w-7xl px-5 sm:px-10">
         {unggulan.length > 0 && (
-          <section className="pt-20">
-            <h2 className="mb-6 text-xs uppercase tracking-[0.2em] text-muted">Pilihan</h2>
-            <div className="grid gap-8 md:grid-cols-2">
+          <section className="pt-20 sm:pt-28">
+            <JudulBagian kicker="Pilihan" judul="Karya unggulan" />
+            <div className="grid gap-x-8 gap-y-14 md:grid-cols-2">
               {unggulan.map((k) => (
                 <KaryaCard key={k.id} karya={k} besar />
               ))}
@@ -65,12 +77,12 @@ export default async function PortofolioPage() {
           </section>
         )}
 
-        <section id="karya" className="scroll-mt-8 pt-20">
-          <h2 className="mb-6 font-display text-3xl text-denim-900">Semua karya</h2>
+        <section id="karya" className="scroll-mt-8 pt-20 sm:pt-28">
+          <JudulBagian kicker="Arsip" judul="Semua karya" />
           {karya.length ? (
             <KaryaGallery karya={karya} />
           ) : (
-            <p className="rounded-2xl border border-dashed border-denim-100 py-16 text-center text-sm text-muted">
+            <p className="rounded-md border border-dashed border-line-strong py-16 text-center text-sm text-ink-3">
               Portofolio sedang disiapkan.
             </p>
           )}
@@ -79,5 +91,14 @@ export default async function PortofolioPage() {
 
       <SiteFooter />
     </>
+  );
+}
+
+function JudulBagian({ kicker, judul }: { kicker: string; judul: string }) {
+  return (
+    <div className="mb-10">
+      <p className="label-meta">{kicker}</p>
+      <h2 className="font-display mt-2 text-[2.5rem] leading-none text-ink sm:text-5xl">{judul}</h2>
+    </div>
   );
 }

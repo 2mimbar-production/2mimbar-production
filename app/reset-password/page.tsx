@@ -1,5 +1,6 @@
 "use client";
 
+import AuthShell from "@/components/AuthShell";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -72,18 +73,15 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="font-display text-3xl text-denim-700 mb-1">Password Baru</h1>
-        <p className="text-muted text-sm mb-8">Bikin password baru buat akunmu.</p>
+    <AuthShell judul="Password baru" sub="Bikin password baru buat akunmu.">
 
         {status === "checking" && (
-          <p className="text-sm text-muted">Memeriksa link...</p>
+          <p className="text-sm text-ink-3">Memeriksa link...</p>
         )}
 
         {status === "invalid" && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5">
-            <p className="text-sm text-red-600">
+          <div className="rounded border-l-2 border-signal bg-signal/5 px-3 py-2.5">
+            <p className="text-sm text-signal">
               Link ini nggak valid atau udah kadaluarsa. Minta link baru lewat halaman{" "}
               <Link href="/forgot-password" className="underline">
                 Lupa Password
@@ -96,36 +94,36 @@ export default function ResetPasswordPage() {
         {status === "ready" && !success && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm text-denim-900 mb-1 block">Password baru</label>
+              <label className="label-meta mb-1.5 block">Password baru</label>
               <input
                 type="password"
                 required
                 minLength={8}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-denim-100 px-3 py-2.5 text-sm focus:border-denim-500 outline-none"
+                className="w-full rounded border border-line-strong bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-4 hover:border-ink-4 focus:border-brand focus:ring-2 focus:ring-brand/15"
                 placeholder="Minimal 8 karakter"
               />
             </div>
             <div>
-              <label className="text-sm text-denim-900 mb-1 block">Konfirmasi password</label>
+              <label className="label-meta mb-1.5 block">Konfirmasi password</label>
               <input
                 type="password"
                 required
                 minLength={8}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full rounded-lg border border-denim-100 px-3 py-2.5 text-sm focus:border-denim-500 outline-none"
+                className="w-full rounded border border-line-strong bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-4 hover:border-ink-4 focus:border-brand focus:ring-2 focus:ring-brand/15"
                 placeholder="Ulangi password baru"
               />
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-signal">{error}</p>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-denim-700 text-white py-2.5 text-sm font-medium hover:bg-denim-500 transition-colors disabled:opacity-50"
+              className="h-11 w-full rounded bg-brand text-sm font-medium text-white transition-colors hover:bg-brand-800 disabled:bg-brand-300"
             >
               {loading ? "Menyimpan..." : "Simpan Password Baru"}
             </button>
@@ -133,13 +131,12 @@ export default function ResetPasswordPage() {
         )}
 
         {success && (
-          <div className="rounded-lg bg-denim-50 border border-denim-100 px-3 py-2.5">
-            <p className="text-sm text-denim-700">
+          <div className="rounded border-l-2 border-brand bg-brand-50 px-3 py-2.5">
+            <p className="text-sm text-brand">
               Password berhasil diubah. Mengarahkan ke halaman login...
             </p>
           </div>
         )}
-      </div>
-    </main>
+    </AuthShell>
   );
 }

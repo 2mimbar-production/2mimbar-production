@@ -16,13 +16,14 @@ export default async function StudioLayout({ children }: { children: React.React
   if (!isAnggota) {
     return (
       <main className="flex min-h-screen items-center justify-center px-6">
-        <div className="max-w-sm text-center">
-          <h1 className="font-display text-xl text-denim-700">Akun belum terdaftar</h1>
-          <p className="mt-2 text-sm text-muted">
+        <div className="w-full max-w-sm rounded-md border border-line bg-white p-6">
+          <p className="label-meta">Akses Studio</p>
+          <h1 className="font-display mt-2 text-3xl text-ink">Akun belum terdaftar</h1>
+          <p className="mt-3 text-sm text-ink-2">
             {user.email} belum ada di daftar anggota studio. Tambahkan lewat tabel{" "}
             <code className="font-mono">anggota_studio</code> di Supabase.
           </p>
-          <div className="mt-6 flex justify-center">
+          <div className="mt-6">
             <LogoutButton variant="menu" />
           </div>
         </div>
@@ -31,10 +32,10 @@ export default async function StudioLayout({ children }: { children: React.React
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="min-h-screen md:flex">
       <StudioNav email={user.email ?? ""} />
-      <main className="min-w-0 flex-1 px-5 py-8 pb-24 sm:px-8 sm:pb-10 print:p-0">
-        <div className="mx-auto max-w-5xl">{children}</div>
+      <main className="min-w-0 flex-1 px-4 pb-28 pt-6 sm:px-8 md:pb-12 md:pt-10 print:p-0">
+        <div className="mx-auto max-w-6xl">{children}</div>
       </main>
     </div>
   );

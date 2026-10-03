@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ExternalLink } from "lucide-react";
+import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { createPublicClient } from "@/lib/supabase/public";
 import { type Karya, embedUrl, thumbnailDari } from "@/lib/produksi";
 import SiteHeader from "@/components/portofolio/SiteHeader";
@@ -46,63 +46,78 @@ export default async function KaryaDetailPage({ params }: { params: { slug: stri
   return (
     <>
       <SiteHeader />
-      <main className="mx-auto max-w-5xl px-5 py-10 sm:px-8">
-        <Link href="/#karya" className="inline-flex items-center gap-1.5 text-sm text-muted hover:text-denim-700">
-          <ArrowLeft size={15} /> Semua karya
-        </Link>
-
-        <p className="mt-8 text-xs uppercase tracking-[0.2em] text-gold-500">{karya.kategori}</p>
-        <h1 className="mt-2 font-display text-3xl text-denim-900 sm:text-5xl">{karya.judul}</h1>
-        {karya.ringkasan && <p className="mt-4 max-w-2xl text-lg text-muted">{karya.ringkasan}</p>}
-
-        <div className="mt-8 overflow-hidden rounded-2xl bg-denim-900">
-          {embed ? (
-            <div className="aspect-video">
-              <iframe
-                src={embed}
-                title={karya.judul}
-                className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          ) : gambar ? (
-            <img src={gambar} alt={karya.judul} className="w-full" />
-          ) : null}
+      <main className="mx-auto max-w-7xl px-5 sm:px-10">
+        <div className="pb-10 pt-10 sm:pt-14">
+          <Link href="/#karya" className="label-meta inline-flex items-center gap-1.5 hover:text-ink">
+            <ArrowLeft size={13} /> Semua karya
+          </Link>
+          <p className="label-meta mt-10">{[karya.kategori, karya.tahun].filter(Boolean).join("  /  ")}</p>
+          <h1 className="font-display mt-3 max-w-5xl text-[2.75rem] leading-[0.95] text-ink sm:text-[4.5rem]">{karya.judul}</h1>
+          {karya.ringkasan && <p className="mt-5 max-w-2xl text-lg leading-relaxed text-ink-2">{karya.ringkasan}</p>}
         </div>
 
-        <div className="mt-10 grid gap-10 md:grid-cols-[1fr_220px]">
-          <div className="whitespace-pre-line leading-relaxed text-denim-900">{karya.deskripsi}</div>
-          <dl className="space-y-4 text-sm">
-            {karya.klien && (
-              <div>
-                <dt className="text-muted">Klien</dt>
-                <dd className="text-denim-900">{karya.klien}</dd>
+        {(embed || gambar) && (
+          <div className="overflow-hidden rounded-sm bg-brand-900">
+            {embed ? (
+              <div className="aspect-video">
+                <iframe
+                  src={embed}
+                  title={karya.judul}
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
               </div>
+            ) : (
+              <img src={gambar!} alt={karya.judul} className="w-full" />
             )}
+          </div>
+        )}
+
+        <div className="mt-12 grid gap-10 border-t border-line pt-10 md:grid-cols-[14rem_1fr] md:gap-16">
+          <dl className="grid grid-cols-2 gap-6 md:grid-cols-1 md:content-start">
+            <div>
+              <dt className="label-meta">Klien</dt>
+              <dd className="mt-1 text-ink">{karya.klien ?? "Produksi internal"}</dd>
+            </div>
             {karya.tahun && (
               <div>
-                <dt className="text-muted">Tahun</dt>
-                <dd className="font-mono text-denim-900">{karya.tahun}</dd>
+                <dt className="label-meta">Tahun</dt>
+                <dd className="mt-1 font-mono text-ink">{karya.tahun}</dd>
               </div>
             )}
+            <div>
+              <dt className="label-meta">Kategori</dt>
+              <dd className="mt-1 text-ink">{karya.kategori}</dd>
+            </div>
             {karya.link_url && (
-              <a
-                href={karya.link_url}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1.5 text-denim-500 underline"
-              >
-                Tonton / lihat di sumber <ExternalLink size={13} />
-              </a>
+              <div>
+                <dt className="label-meta">Tautan</dt>
+                <dd className="mt-1">
+                  <a
+                    href={karya.link_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 font-medium text-brand hover:text-brand-800"
+                  >
+                    Lihat di sumber <ArrowUpRight size={15} />
+                  </a>
+                </dd>
+              </div>
             )}
           </dl>
+          {karya.deskripsi ? (
+            <div className="max-w-2xl whitespace-pre-line text-[1.0625rem] leading-relaxed text-ink-2">{karya.deskripsi}</div>
+          ) : (
+            <div />
+          )}
         </div>
 
         {lain && lain.length > 0 && (
-          <section className="mt-20 border-t border-denim-100 pt-10">
-            <h2 className="mb-6 font-display text-xl text-denim-900">Karya lain</h2>
-            <div className="grid gap-8 sm:grid-cols-3">
+          <section className="mt-24 border-t border-line pt-12">
+            <p className="label-meta">Lanjut menonton</p>
+            <h2 className="font-display mb-10 mt-2 text-4xl text-ink">Karya lain</h2>
+            <div className="grid gap-x-8 gap-y-14 sm:grid-cols-3">
               {(lain as Karya[]).map((k) => (
                 <KaryaCard key={k.id} karya={k} />
               ))}

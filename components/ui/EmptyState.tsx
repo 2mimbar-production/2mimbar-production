@@ -1,7 +1,8 @@
-export function EmptyState({ message }: { message: string }) {
+export function EmptyState({ message, aksi }: { message: string; aksi?: React.ReactNode }) {
   return (
-    <div className="text-center py-10 border border-dashed border-denim-100 rounded-signature">
-      <p className="text-sm text-muted">{message}</p>
+    <div className="flex flex-col items-center gap-3 rounded-md border border-dashed border-line-strong px-6 py-10 text-center">
+      <p className="max-w-sm text-sm text-ink-3">{message}</p>
+      {aksi}
     </div>
   );
 }

@@ -3,7 +3,7 @@ import { type Laporan, STATUS_EPISODE, hariIni, judulEpisode, labelDari } from "
 import FilterLaporan from "@/components/studio/FilterLaporan";
 import LaporanList from "@/components/studio/LaporanList";
 import TombolTambah from "@/components/studio/TombolTambah";
-import { PageHeader } from "@/components/studio/ui";
+import { PageHeader, Readout, Section } from "@/components/studio/ui";
 
 export default async function LaporanPage({
   searchParams,
@@ -70,8 +70,9 @@ export default async function LaporanPage({
   return (
     <>
       <PageHeader
-        judul={`Laporan ${namaBulan}`}
-        sub={namaFilter ? `Program: ${namaFilter}` : "Episode yang dikerjakan dan sudah tayang, per bulan."}
+        kicker={namaFilter ? `Laporan bulanan  /  ${namaFilter}` : "Laporan bulanan"}
+        judul={namaBulan}
+        sub="Episode yang dikerjakan dan sudah tayang. Unduh sebagai PDF atau Excel untuk laporan bulanan."
         aksi={
           <TombolTambah
             jenis="laporan"
@@ -81,7 +82,6 @@ export default async function LaporanPage({
           />
         }
       />
-      <p className="-mt-4 mb-6 hidden text-sm text-muted print:block">Divisi Produksi Duamimbar</p>
       <FilterLaporan
         bulan={bulan}
         proyekId={proyekId}
@@ -90,49 +90,43 @@ export default async function LaporanPage({
         baris={baris}
       />
 
-      <div className="mb-6 grid grid-cols-3 gap-3">
-        {[
-          [tayang.length, "episode tayang"],
-          [laporan.length - tayang.length, "episode dikerjakan"],
-          [rekap.size, "program"],
-        ].map(([n, label]) => (
-          <div key={label} className="rounded-2xl border border-denim-100 bg-white p-4 print:p-2">
-            <p className="font-mono text-2xl text-denim-900">{n}</p>
-            <p className="text-xs text-muted">{label}</p>
-          </div>
-        ))}
-      </div>
-      {tanpaBukti > 0 && (
-        <p className="-mt-2 mb-6 text-sm text-amber-700 print:hidden">
-          {tanpaBukti} episode tayang belum punya bukti (link atau screenshot).
-        </p>
-      )}
+      <Readout
+        item={[
+          { n: tayang.length, label: "Episode tayang" },
+          { n: laporan.length - tayang.length, label: "Sedang dikerjakan" },
+          { n: rekap.size, label: "Program" },
+          { n: tanpaBukti, label: "Tayang tanpa bukti", peringatan: tanpaBukti > 0 },
+        ]}
+      />
 
       {rekapUrut.length > 1 && (
-        <section className="mb-8 break-inside-avoid">
-          <h2 className="mb-2 text-sm font-medium text-denim-700">Rekap per program</h2>
-          <table className="cetak-tabel w-full overflow-hidden rounded-2xl border border-denim-100 bg-white text-left text-sm">
-            <thead className="bg-surface text-xs text-muted">
-              <tr>
-                <th className="px-4 py-2 font-normal">Program</th>
-                <th className="px-4 py-2 text-right font-normal">Tayang</th>
-                <th className="px-4 py-2 text-right font-normal">Dikerjakan</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-denim-100">
-              {rekapUrut.map(([nama, r]) => (
-                <tr key={nama}>
-                  <td className="px-4 py-2 text-denim-900">{nama}</td>
-                  <td className="px-4 py-2 text-right font-mono">{r.tayang}</td>
-                  <td className="px-4 py-2 text-right font-mono">{r.dikerjakan}</td>
+        <Section judul="Rekap per program" className="mt-10 break-inside-avoid">
+          <div className="overflow-hidden rounded-md border border-line bg-white">
+            <table className="cetak-tabel w-full text-left text-sm">
+              <thead className="label-meta border-b border-line bg-paper">
+                <tr>
+                  <th className="px-4 py-2.5 font-normal">Program</th>
+                  <th className="w-28 px-4 py-2.5 text-right font-normal">Tayang</th>
+                  <th className="w-28 px-4 py-2.5 text-right font-normal">Dikerjakan</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </section>
+              </thead>
+              <tbody className="divide-y divide-line">
+                {rekapUrut.map(([nama, r]) => (
+                  <tr key={nama}>
+                    <td className="px-4 py-2.5 font-medium text-ink">{nama}</td>
+                    <td className="px-4 py-2.5 text-right font-mono text-ink">{r.tayang}</td>
+                    <td className="px-4 py-2.5 text-right font-mono text-ink-3">{r.dikerjakan}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
       )}
 
-      <LaporanList laporan={laporan} proyek={opsi} kosong="Belum ada episode di bulan ini." />
+      <Section judul="Daftar episode" jumlah={laporan.length} className="mt-10">
+        <LaporanList laporan={laporan} proyek={opsi} kosong="Belum ada episode di bulan ini." />
+      </Section>
     </>
   );
 }

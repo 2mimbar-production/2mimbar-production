@@ -56,8 +56,8 @@ export default function FilterLaporan({
 
   return (
     <div className="mb-6 flex flex-wrap items-center gap-2 print:hidden">
-      <Input type="month" value={bulan} onChange={(e) => ke(e.target.value, proyekId)} className="!w-auto" aria-label="Bulan" />
-      <Select value={proyekId} onChange={(e) => ke(bulan, e.target.value)} className="!w-auto max-w-[16rem]" aria-label="Program">
+      <Input type="month" value={bulan} onChange={(e) => ke(e.target.value, proyekId)} className="!w-auto h-9 py-0" aria-label="Bulan" />
+      <Select value={proyekId} onChange={(e) => ke(bulan, e.target.value)} className="!w-auto h-9 max-w-[16rem] py-0" aria-label="Program">
         <option value="">Semua program</option>
         {proyek.map((p) => (
           <option key={p.id} value={p.id}>
@@ -66,10 +66,10 @@ export default function FilterLaporan({
         ))}
       </Select>
       <div className="ml-auto flex gap-2">
-        <Button variant="secondary" onClick={unduhCsv} disabled={baris.length < 2} className="flex items-center gap-1.5">
+        <Button variant="secondary" onClick={unduhCsv} disabled={baris.length < 2}>
           <FileSpreadsheet size={15} /> Excel (CSV)
         </Button>
-        <Button variant="secondary" onClick={unduhPdf} className="flex items-center gap-1.5">
+        <Button variant="secondary" onClick={unduhPdf}>
           <FileText size={15} /> PDF
         </Button>
       </div>

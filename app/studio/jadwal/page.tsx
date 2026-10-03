@@ -3,7 +3,7 @@ import { type Jadwal, hariIni, tambahHari } from "@/lib/produksi";
 import KalenderBulan from "@/components/studio/KalenderBulan";
 import JadwalList from "@/components/studio/JadwalList";
 import TombolTambah from "@/components/studio/TombolTambah";
-import { PageHeader } from "@/components/studio/ui";
+import { PageHeader, Section } from "@/components/studio/ui";
 
 export default async function JadwalPage({ searchParams }: { searchParams: { bulan?: string } }) {
   const today = hariIni();
@@ -35,16 +35,15 @@ export default async function JadwalPage({ searchParams }: { searchParams: { bul
   return (
     <>
       <PageHeader
-        judul="Jadwal produksi"
-        sub="Klik tanggal untuk menambah jadwal, klik jadwal untuk mengubah."
+        judul="Jadwal"
+        sub="Ketuk tanggal untuk menambah jadwal, ketuk jadwal untuk mengubahnya."
         aksi={<TombolTambah jenis="jadwal" label="Jadwal baru" proyek={opsi} />}
       />
       <KalenderBulan bulan={bulan} jadwal={(diBulan ?? []) as Jadwal[]} proyek={opsi} />
 
-      <section className="mt-10">
-        <h2 className="mb-3 font-display text-lg text-denim-700">30 hari ke depan</h2>
+      <Section judul="30 hari ke depan" jumlah={(mendatang ?? []).length} className="mt-10">
         <JadwalList jadwal={(mendatang ?? []) as Jadwal[]} proyek={opsi} kosong="Tidak ada jadwal dalam 30 hari ke depan." />
-      </section>
+      </Section>
     </>
   );
 }

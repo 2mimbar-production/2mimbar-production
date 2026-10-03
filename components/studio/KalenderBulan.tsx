@@ -44,25 +44,25 @@ export default function KalenderBulan({
   });
 
   return (
-    <div className="rounded-2xl border border-denim-100 bg-white">
-      <div className="flex items-center justify-between border-b border-denim-100 px-4 py-3">
-        <h2 className="font-display text-denim-700">{judulBulan}</h2>
-        <div className="flex items-center gap-1">
-          <Link href={`/studio/jadwal?bulan=${geserBulan(bulan, -1)}`} className="rounded-lg p-1.5 hover:bg-surface" aria-label="Bulan sebelumnya">
+    <div className="overflow-hidden rounded-md border border-line bg-white">
+      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+        <h2 className="font-display text-2xl capitalize text-ink">{judulBulan}</h2>
+        <div className="flex items-center rounded border border-line-strong">
+          <Link href={`/studio/jadwal?bulan=${geserBulan(bulan, -1)}`} className="p-1.5 text-ink-2 hover:bg-paper" aria-label="Bulan sebelumnya">
             <ChevronLeft size={18} />
           </Link>
-          <Link href="/studio/jadwal" className="rounded-lg px-2 py-1 text-xs text-denim-500 hover:bg-surface">
+          <Link href="/studio/jadwal" className="border-x border-line-strong px-3 py-1.5 text-xs font-medium text-ink hover:bg-paper">
             Hari ini
           </Link>
-          <Link href={`/studio/jadwal?bulan=${geserBulan(bulan, 1)}`} className="rounded-lg p-1.5 hover:bg-surface" aria-label="Bulan berikutnya">
+          <Link href={`/studio/jadwal?bulan=${geserBulan(bulan, 1)}`} className="p-1.5 text-ink-2 hover:bg-paper" aria-label="Bulan berikutnya">
             <ChevronRight size={18} />
           </Link>
         </div>
       </div>
 
-      <div className="grid grid-cols-7 border-b border-denim-100 text-center text-[11px] uppercase text-muted">
+      <div className="grid grid-cols-7 border-b border-line bg-paper text-center">
         {HARI.map((h) => (
-          <div key={h} className="py-2">
+          <div key={h} className="label-meta py-2">
             {h}
           </div>
         ))}
@@ -75,13 +75,13 @@ export default function KalenderBulan({
             <div
               key={tgl}
               onClick={() => setBaru(tgl)}
-              className={`min-h-[76px] cursor-pointer border-denim-100 p-1 hover:bg-surface sm:min-h-[104px] sm:p-1.5 ${
+              className={`min-h-[76px] cursor-pointer border-line p-1 transition-colors hover:bg-brand-50 sm:min-h-[108px] sm:p-1.5 ${
                 i % 7 !== 6 ? "border-r" : ""
-              } ${i < jumlahSel - 7 ? "border-b" : ""} ${diLuar ? "bg-surface/60" : ""}`}
+              } ${i < jumlahSel - 7 ? "border-b" : ""} ${diLuar ? "bg-paper/70" : ""}`}
             >
               <p
-                className={`mb-1 flex h-6 w-6 items-center justify-center rounded-full font-mono text-xs ${
-                  tgl === today ? "bg-denim-700 text-white" : diLuar ? "text-denim-300" : "text-denim-900"
+                className={`mb-1 flex h-6 min-w-6 items-center justify-center rounded-sm px-1 font-mono text-xs ${
+                  tgl === today ? "bg-brand font-medium text-white" : diLuar ? "text-ink-4" : "text-ink-2"
                 }`}
               >
                 {Number(tgl.slice(8))}
@@ -95,24 +95,24 @@ export default function KalenderBulan({
                       setEdit(j);
                     }}
                     title={j.judul}
-                    className={`block w-full truncate rounded px-1 py-0.5 text-left text-[10px] leading-tight text-white sm:text-[11px] ${
+                    className={`block w-full truncate rounded-sm px-1.5 py-0.5 text-left text-[10px] font-medium leading-tight text-white sm:text-[11px] ${
                       WARNA_TAHAP[j.tahap]
                     } ${j.status === "selesai" ? "opacity-50" : ""}`}
                   >
                     {j.judul}
                   </button>
                 ))}
-                {items.length > 3 && <p className="px-1 text-[10px] text-muted">+{items.length - 3} lagi</p>}
+                {items.length > 3 && <p className="px-1 font-mono text-[10px] text-ink-3">+{items.length - 3} lagi</p>}
               </div>
             </div>
           );
         })}
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1 border-t border-denim-100 px-4 py-3 text-xs text-muted">
+      <div className="flex flex-wrap gap-x-5 gap-y-1.5 border-t border-line px-4 py-3 text-xs text-ink-2">
         {TAHAP_JADWAL.map((t) => (
           <span key={t.value} className="inline-flex items-center gap-1.5">
-            <span className={`h-2.5 w-2.5 rounded-full ${WARNA_TAHAP[t.value]}`} /> {t.label}
+            <span className={`h-2.5 w-2.5 rounded-sm ${WARNA_TAHAP[t.value]}`} /> {t.label}
           </span>
         ))}
       </div>

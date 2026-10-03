@@ -1,27 +1,27 @@
 import Link from "next/link";
 
+/** Header situs publik. `overlay` = transparan di atas hero; selain itu bidang denim. */
 export default function SiteHeader({ overlay = false }: { overlay?: boolean }) {
-  const tone = overlay ? "text-white" : "text-denim-900";
   return (
-    <header
-      className={`${overlay ? "absolute" : "relative border-b border-denim-100 bg-white"} inset-x-0 top-0 z-20`}
-    >
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className={`font-display text-lg ${tone}`}>
-          Duamimbar <span className="font-sans font-normal opacity-60">Produksi</span>
+    <header className={`${overlay ? "absolute" : "relative bg-brand-900"} inset-x-0 top-0 z-20 text-white`}>
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5 sm:px-10">
+        <Link href="/" className="flex items-center gap-3">
+          <img src="/logo-white.png" alt="" className="h-8 w-auto" />
+          <span className="leading-none">
+            <span className="font-display block text-xl">Duamimbar</span>
+            <span className="mt-1 hidden font-mono text-meta uppercase text-white/60 sm:block">Divisi Produksi</span>
+          </span>
         </Link>
-        <nav className={`flex items-center gap-5 text-sm ${tone}`}>
-          <Link href="/#karya" className="hover:opacity-70">
+        <nav className="flex items-center gap-1 text-sm sm:gap-2">
+          <Link href="/#karya" className="rounded px-2.5 py-2 text-white/80 hover:text-white">
             Karya
           </Link>
-          <Link href="/#kontak" className="hover:opacity-70">
+          <Link href="/#kontak" className="rounded px-2.5 py-2 text-white/80 hover:text-white">
             Kontak
           </Link>
           <Link
             href="/studio"
-            className={`rounded-full px-3.5 py-1.5 ${
-              overlay ? "border border-white/40 hover:bg-white/10" : "border border-denim-100 hover:border-denim-300"
-            }`}
+            className="ml-1 rounded border border-white/35 px-3 py-1.5 font-medium transition-colors hover:border-white hover:bg-white hover:text-brand-900"
           >
             Studio
           </Link>

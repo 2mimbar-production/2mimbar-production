@@ -37,7 +37,7 @@ export default function ProyekAksi({ proyek }: { proyek: Proyek }) {
           value={proyek.status}
           disabled={loading}
           onChange={(e) => gantiStatus(e.target.value)}
-          className="!w-auto"
+          className="!w-auto h-9 py-0"
           aria-label="Status program"
         >
           {STATUS_PROYEK.map((s) => (
@@ -49,7 +49,7 @@ export default function ProyekAksi({ proyek }: { proyek: Proyek }) {
         <Button variant="secondary" onClick={() => setEdit(true)}>
           Ubah
         </Button>
-        <Button variant="danger" onClick={hapus} disabled={loading} className="px-2">
+        <Button variant="danger" onClick={hapus} disabled={loading}>
           Hapus
         </Button>
       </div>

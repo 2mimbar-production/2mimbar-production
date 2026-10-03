@@ -2,38 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --font-inter: "Inter";
+@layer base {
+  * {
+    scroll-behavior: smooth;
+  }
+  :focus-visible {
+    outline: 2px solid theme("colors.brand.500");
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: theme("colors.brand.100");
+  }
 }
 
-* {
-  scroll-behavior: smooth;
+@layer components {
+  /* Judul: Archivo dipersempit, tebal, rapat. Satu-satunya gaya judul. */
+  .font-display {
+    font-family: var(--font-archivo), system-ui, sans-serif;
+    font-stretch: 78%;
+    font-weight: 700;
+    letter-spacing: -0.005em;
+    /* Spasi Archivo condensed terlalu sempit; tanpa ini "Minggu ini" terbaca menyatu. */
+    word-spacing: 0.12em;
+  }
+  /* Angka & metadata: lebar digit seragam supaya kolom rapi. */
+  .font-mono {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Label kecil berhuruf besar, mis. judul kolom tabel dan label form. */
+  .label-meta {
+    @apply font-mono text-meta uppercase text-ink-3;
+  }
 }
 
-:focus-visible {
-  outline: 2px solid theme("colors.gold.500");
-  outline-offset: 2px;
-}
-
-/* Headline / sub-headline — tetap Inter, dibedain lewat bobot & tracking
-   yang lebih tegas, bukan lewat typeface lain. */
-.font-display {
-  font-weight: 600;
-  letter-spacing: -0.015em;
-}
-
-/* Data & angka (ID, nominal, timestamp) — tetap Inter, tapi angka jadi
-   tabular (lebar tiap digit sama) biar rapi pas dijejer di tabel, dan
-   sedikit lebih rapat biar kerasa "presisi" tanpa ganti typeface. */
-.font-mono {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
-}
-
-/* Tabel laporan saat dicetak / disimpan ke PDF: satu ukuran huruf yang rapi. */
+/* Laporan saat dicetak / disimpan ke PDF: satu ukuran huruf yang rapi. */
 @media print {
   @page {
     margin: 14mm;
+  }
+  body {
+    background: white;
   }
   .cetak-tabel,
   .cetak-tabel * {

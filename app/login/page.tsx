@@ -1,5 +1,6 @@
 "use client";
 
+import AuthShell from "@/components/AuthShell";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -31,27 +32,24 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="font-display text-3xl text-denim-700 mb-1">Studio Produksi</h1>
-        <p className="text-muted text-sm mb-8">Masuk untuk mencatat laporan, proyek, dan jadwal produksi.</p>
+    <AuthShell judul="Masuk Studio" sub="Khusus anggota Divisi Produksi Duamimbar.">
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-sm text-denim-900 mb-1 block">Email</label>
+            <label className="label-meta mb-1.5 block">Email</label>
             <input
               type="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-denim-100 px-3 py-2.5 text-sm focus:border-denim-500 outline-none"
+              className="w-full rounded border border-line-strong bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-4 hover:border-ink-4 focus:border-brand focus:ring-2 focus:ring-brand/15"
               placeholder="nama@perusahaan.com"
             />
           </div>
           <div>
             <div className="flex items-center justify-between mb-1">
-              <label className="text-sm text-denim-900 block">Password</label>
-              <Link href="/forgot-password" className="text-xs text-denim-500 underline">
+              <label className="label-meta block">Password</label>
+              <Link href="/forgot-password" className="text-xs text-brand underline">
                 Lupa password?
               </Link>
             </div>
@@ -60,28 +58,27 @@ export default function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-lg border border-denim-100 px-3 py-2.5 text-sm focus:border-denim-500 outline-none"
+              className="w-full rounded border border-line-strong bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-4 hover:border-ink-4 focus:border-brand focus:ring-2 focus:ring-brand/15"
               placeholder="••••••••"
             />
           </div>
 
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-signal">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-denim-700 text-white py-2.5 text-sm font-medium hover:bg-denim-500 transition-colors disabled:opacity-50"
+            className="h-11 w-full rounded bg-brand text-sm font-medium text-white transition-colors hover:bg-brand-800 disabled:bg-brand-300"
           >
             {loading ? "Memproses..." : "Masuk"}
           </button>
         </form>
 
-        <p className="text-xs text-muted mt-6">
-          <Link href="/" className="text-denim-700 underline">
+        <p className="text-xs text-ink-3 mt-6">
+          <Link href="/" className="text-brand underline">
             Kembali ke portofolio
           </Link>
         </p>
-      </div>
-    </main>
+    </AuthShell>
   );
 }

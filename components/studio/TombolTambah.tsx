@@ -25,7 +25,7 @@ export default function TombolTambah({
   const tutup = () => setBuka(false);
   return (
     <>
-      <Button variant={variant} onClick={() => setBuka(true)} className="flex items-center gap-1.5">
+      <Button variant={variant} onClick={() => setBuka(true)}>
         <Plus size={16} /> {label}
       </Button>
       {buka && jenis === "jadwal" && <JadwalForm proyek={proyek} bawaan={bawaan} onClose={tutup} />}

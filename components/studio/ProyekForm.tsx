@@ -80,8 +80,8 @@ export default function ProyekForm({ awal, onClose }: { awal?: Proyek; onClose: 
           <Input value={form.pic} onChange={set("pic")} />
         </Label>
 
-        <fieldset className="col-span-2 space-y-2 rounded-xl border border-denim-100 p-3">
-          <legend className="px-1 text-xs text-muted">Tayang di</legend>
+        <fieldset className="col-span-2 space-y-2 rounded-md border border-line bg-paper p-3">
+          <legend className="label-meta px-1">Tayang di</legend>
           {kanal.map((k, i) => (
             <div key={i} className="flex flex-wrap gap-2">
               <Select
@@ -112,7 +112,7 @@ export default function ProyekForm({ awal, onClose }: { awal?: Proyek; onClose: 
               <button
                 type="button"
                 onClick={() => setKanal((list) => list.filter((_, j) => j !== i))}
-                className="shrink-0 rounded-lg p-2 text-muted hover:bg-surface"
+                className="shrink-0 rounded p-2 text-ink-3 hover:bg-ink/5 hover:text-signal"
                 aria-label="Hapus platform"
               >
                 <X size={16} />
@@ -122,7 +122,7 @@ export default function ProyekForm({ awal, onClose }: { awal?: Proyek; onClose: 
           <button
             type="button"
             onClick={() => setKanal((list) => [...list, { ...KANAL_BARU, platform: list.length ? "Spotify" : "YouTube" }])}
-            className="flex items-center gap-1 text-sm text-denim-500 hover:underline"
+            className="flex items-center gap-1 text-sm font-medium text-brand hover:text-brand-800"
           >
             <Plus size={14} /> Tambah platform
           </button>
@@ -148,7 +148,7 @@ export default function ProyekForm({ awal, onClose }: { awal?: Proyek; onClose: 
         <Label teks="Catatan / brief" className="col-span-2">
           <Textarea rows={3} value={form.catatan} onChange={set("catatan")} />
         </Label>
-        <div className="col-span-2 space-y-3">
+        <div className="sticky -bottom-5 col-span-2 -mx-5 -mb-5 mt-2 space-y-3 border-t border-line bg-white px-5 py-3">
           <PesanError pesan={error} />
           <div className="flex justify-end gap-2">
             <Button type="button" variant="secondary" onClick={onClose}>

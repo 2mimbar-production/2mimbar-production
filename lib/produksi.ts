@@ -138,12 +138,12 @@ export const STATUS_JADWAL: { value: StatusJadwal; label: string }[] = [
 
 /** Warna titik/garis per tahap, dipakai di kalender & daftar jadwal. */
 export const WARNA_TAHAP: Record<TahapJadwal, string> = {
-  praproduksi: "bg-orange-400",
-  produksi: "bg-denim-700",
+  praproduksi: "bg-amber-500",
+  produksi: "bg-brand",
   pascaproduksi: "bg-violet-500",
-  review: "bg-emerald-500",
-  rilis: "bg-gold-500",
-  lainnya: "bg-slate-400",
+  review: "bg-teal-600",
+  rilis: "bg-signal",
+  lainnya: "bg-ink-4",
 };
 
 export function labelDari<T extends string>(list: { value: T; label: string }[], value: T) {

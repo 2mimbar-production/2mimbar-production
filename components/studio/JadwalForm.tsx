@@ -117,7 +117,7 @@ export default function JadwalForm({
         <Label teks="Catatan" className="col-span-2">
           <Textarea rows={3} value={form.catatan} onChange={set("catatan")} placeholder="Peralatan, kebutuhan, kontak lokasi..." />
         </Label>
-        <div className="col-span-2 space-y-3">
+        <div className="sticky -bottom-5 col-span-2 -mx-5 -mb-5 mt-2 space-y-3 border-t border-line bg-white px-5 py-3">
           <PesanError pesan={error} />
           <div className="flex items-center gap-2">
             {awal && (

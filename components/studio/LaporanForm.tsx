@@ -157,23 +157,23 @@ export default function LaporanForm({
         </Label>
 
         <div className="col-span-2">
-          <span className="mb-1 block text-xs text-muted">Screenshot bukti tayang</span>
+          <span className="label-meta mb-1.5 block">Screenshot bukti tayang</span>
           {form.bukti_url ? (
             <div className="relative w-fit">
               <a href={form.bukti_url} target="_blank" rel="noreferrer">
-                <img src={form.bukti_url} alt="Bukti tayang" className="max-h-40 rounded-lg border border-denim-100" />
+                <img src={form.bukti_url} alt="Bukti tayang" className="max-h-40 rounded-sm border border-line" />
               </a>
               <button
                 type="button"
                 onClick={hapusScreenshot}
-                className="absolute -right-2 -top-2 rounded-full bg-white p-1 text-muted shadow hover:text-red-600"
+                className="absolute -right-2 -top-2 rounded-full border border-line bg-white p-1 text-ink-3 shadow-sm hover:text-signal"
                 aria-label="Hapus screenshot"
               >
                 <X size={14} />
               </button>
             </div>
           ) : (
-            <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-denim-100 px-3 py-3 text-sm text-muted hover:border-denim-300">
+            <label className="flex cursor-pointer items-center gap-2 rounded border border-dashed border-line-strong bg-paper px-3 py-3 text-sm text-ink-2 transition-colors hover:border-brand hover:text-brand">
               <ImagePlus size={16} />
               {mengunggah ? "Mengunggah..." : "Unggah gambar (otomatis dikecilkan)"}
               <input type="file" accept="image/*" className="hidden" onChange={unggahBukti} disabled={mengunggah} />
@@ -184,7 +184,7 @@ export default function LaporanForm({
         <Label teks="Catatan" className="col-span-2">
           <Textarea rows={2} value={form.catatan} onChange={set("catatan")} placeholder="Opsional: views awal, kendala, kolaborator" />
         </Label>
-        <div className="col-span-2 space-y-3">
+        <div className="sticky -bottom-5 col-span-2 -mx-5 -mb-5 mt-2 space-y-3 border-t border-line bg-white px-5 py-3">
           <PesanError pesan={error} />
           <div className="flex items-center gap-2">
             {awal && (

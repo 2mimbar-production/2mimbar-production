@@ -12,21 +12,28 @@ export default function KaryaGallery({ karya }: { karya: Karya[] }) {
   return (
     <div>
       {kategori.length > 1 && (
-        <div className="mb-8 flex flex-wrap gap-2">
-          {[null, ...kategori].map((k) => (
-            <button
-              key={k ?? "semua"}
-              onClick={() => setAktif(k)}
-              className={`rounded-full px-4 py-1.5 text-sm transition-colors ${
-                aktif === k ? "bg-denim-900 text-white" : "bg-white text-denim-700 ring-1 ring-denim-100 hover:ring-denim-300"
-              }`}
-            >
-              {k ?? "Semua"}
-            </button>
-          ))}
+        <div className="mb-10 flex gap-6 overflow-x-auto border-b border-line" role="tablist">
+          {[null, ...kategori].map((k) => {
+            const on = aktif === k;
+            const jumlah = k ? karya.filter((x) => x.kategori === k).length : karya.length;
+            return (
+              <button
+                key={k ?? "semua"}
+                role="tab"
+                aria-selected={on}
+                onClick={() => setAktif(k)}
+                className={`-mb-px flex shrink-0 items-center gap-1.5 border-b-2 pb-3 text-sm transition-colors ${
+                  on ? "border-brand font-medium text-ink" : "border-transparent text-ink-3 hover:text-ink"
+                }`}
+              >
+                {k ?? "Semua"}
+                <span className={`font-mono text-xs ${on ? "text-brand" : "text-ink-4"}`}>{jumlah}</span>
+              </button>
+            );
+          })}
         </div>
       )}
-      <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-x-8 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
         {tampil.map((k) => (
           <KaryaCard key={k.id} karya={k} />
         ))}

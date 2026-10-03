@@ -1,5 +1,6 @@
 "use client";
 
+import AuthShell from "@/components/AuthShell";
 import { useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -34,16 +35,11 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center px-6">
-      <div className="w-full max-w-sm">
-        <h1 className="font-display text-3xl text-denim-700 mb-1">Lupa Password</h1>
-        <p className="text-muted text-sm mb-8">
-          Masukkan email akunmu, kami kirim link buat bikin password baru.
-        </p>
+    <AuthShell judul="Lupa password" sub="Masukkan email akunmu, kami kirim link buat bikin password baru.">
 
         {sent ? (
-          <div className="rounded-lg bg-denim-50 border border-denim-100 px-3 py-2.5">
-            <p className="text-sm text-denim-700">
+          <div className="rounded border-l-2 border-brand bg-brand-50 px-3 py-2.5">
+            <p className="text-sm text-brand">
               Kalau email <span className="font-medium">{email}</span> terdaftar, link reset
               password udah dikirim. Cek inbox (atau folder spam) kamu.
             </p>
@@ -51,35 +47,34 @@ export default function ForgotPasswordPage() {
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-sm text-denim-900 mb-1 block">Email</label>
+              <label className="label-meta mb-1.5 block">Email</label>
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-denim-100 px-3 py-2.5 text-sm focus:border-denim-500 outline-none"
+                className="w-full rounded border border-line-strong bg-white px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-ink-4 hover:border-ink-4 focus:border-brand focus:ring-2 focus:ring-brand/15"
                 placeholder="nama@perusahaan.com"
               />
             </div>
 
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && <p className="text-sm text-signal">{error}</p>}
 
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-denim-700 text-white py-2.5 text-sm font-medium hover:bg-denim-500 transition-colors disabled:opacity-50"
+              className="h-11 w-full rounded bg-brand text-sm font-medium text-white transition-colors hover:bg-brand-800 disabled:bg-brand-300"
             >
               {loading ? "Mengirim..." : "Kirim Link Reset"}
             </button>
           </form>
         )}
 
-        <p className="text-xs text-muted mt-6">
-          <Link href="/login" className="text-denim-700 underline">
+        <p className="text-xs text-ink-3 mt-6">
+          <Link href="/login" className="text-brand underline">
             Kembali ke halaman login
           </Link>
         </p>
-      </div>
-    </main>
+    </AuthShell>
   );
 }

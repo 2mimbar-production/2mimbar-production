@@ -6,7 +6,7 @@ import { Plus } from "lucide-react";
 import { type Proyek, PROYEK_AKTIF, STATUS_PROYEK, formatTanggal, hariIni, labelDari } from "@/lib/produksi";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { Badge, PageHeader } from "./ui";
+import { Badge, PageHeader, Tabs } from "./ui";
 import ProyekForm from "./ProyekForm";
 
 const FILTER = [
@@ -29,58 +29,57 @@ export default function ProyekBoard({ proyek }: { proyek: Proyek[] }) {
         judul="Program"
         sub="Program dan IP yang diproduksi, dari ide sampai selesai."
         aksi={
-          <Button onClick={() => setFormBuka(true)} className="flex items-center gap-1.5">
+          <Button onClick={() => setFormBuka(true)}>
             <Plus size={16} /> Program baru
           </Button>
         }
       />
 
-      <div className="mb-5 flex flex-wrap gap-2">
-        {FILTER.map((x) => (
-          <button
-            key={x.key}
-            onClick={() => setFilter(x.key)}
-            className={`rounded-full px-3.5 py-1.5 text-sm ${
-              filter === x.key ? "bg-denim-900 text-white" : "bg-denim-50 text-denim-700 hover:bg-denim-100"
-            }`}
-          >
-            {x.label} <span className="font-mono opacity-60">{proyek.filter(x.cocok).length}</span>
-          </button>
-        ))}
-      </div>
+      <Tabs
+        item={FILTER.map((x) => ({ key: x.key, label: x.label, jumlah: proyek.filter(x.cocok).length }))}
+        aktif={filter}
+        onPilih={setFilter}
+      />
 
       {tampil.length === 0 ? (
         <EmptyState message="Belum ada program di kelompok ini." />
       ) : (
-        <ul className="divide-y divide-denim-100 overflow-hidden rounded-2xl border border-denim-100 bg-white">
-          {tampil.map((p) => {
-            const telat = p.tenggat && p.tenggat < today && PROYEK_AKTIF.includes(p.status);
-            return (
-              <li key={p.id}>
-                <Link href={`/studio/proyek/${p.id}`} className="flex items-center gap-4 px-4 py-3.5 hover:bg-surface">
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate font-medium text-denim-900">{p.nama}</p>
-                    <p className="truncate text-xs text-muted">
-                      {[p.jenis, ...(p.kanal ?? []).map((k) => (k.nama ? `${k.platform} ${k.nama}` : k.platform)), p.pic && `PIC ${p.pic}`]
-                        .filter(Boolean)
-                        .join(" · ") || "Tanpa keterangan"}
-                    </p>
-                  </div>
-                  <div className="hidden text-right sm:block">
-                    <p className={`font-mono text-xs ${telat ? "text-red-600" : "text-muted"}`}>
+        <div className="overflow-hidden rounded-md border border-line bg-white">
+          <div className="label-meta hidden grid-cols-[1fr_11rem_8.5rem] gap-4 border-b border-line bg-paper px-4 py-2 sm:grid">
+            <span>Program</span>
+            <span>Tenggat</span>
+            <span>Status</span>
+          </div>
+          <ul className="divide-y divide-line">
+            {tampil.map((p) => {
+              const telat = Boolean(p.tenggat && p.tenggat < today && PROYEK_AKTIF.includes(p.status));
+              const kanal = Array.from(new Set((p.kanal ?? []).map((k) => k.platform))).join(", ");
+              return (
+                <li key={p.id}>
+                  <Link
+                    href={`/studio/proyek/${p.id}`}
+                    className="grid grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-4 py-3.5 transition-colors hover:bg-paper sm:grid-cols-[1fr_11rem_8.5rem]"
+                  >
+                    <div className="min-w-0">
+                      <p className="truncate font-medium text-ink">{p.nama}</p>
+                      <p className="mt-0.5 truncate text-xs text-ink-3">
+                        {[p.jenis, kanal].filter(Boolean).join("  ·  ") || "Belum ada format dan kanal"}
+                      </p>
+                    </div>
+                    <p className={`order-3 col-span-2 font-mono text-xs sm:order-none sm:col-span-1 ${telat ? "text-signal" : "text-ink-3"}`}>
                       {p.status === "selesai"
                         ? `Selesai ${formatTanggal(p.tanggal_selesai)}`
                         : p.tenggat
-                          ? `${telat ? "Lewat tenggat" : "Tenggat"} ${formatTanggal(p.tenggat)}`
-                          : ""}
+                          ? `${telat ? "Lewat " : ""}${formatTanggal(p.tenggat)}`
+                          : "-"}
                     </p>
-                  </div>
-                  <Badge nilai={p.status} label={labelDari(STATUS_PROYEK, p.status)} />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+                    <Badge nilai={p.status} label={labelDari(STATUS_PROYEK, p.status)} />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       )}
 
       {formBuka && <ProyekForm onClose={() => setFormBuka(false)} />}

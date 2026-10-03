@@ -141,18 +141,18 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
         </Label>
 
         <div className="col-span-2">
-          <span className="mb-1 block text-xs text-muted">Cover</span>
+          <span className="label-meta mb-1.5 block">Cover</span>
           <div className="flex items-center gap-3">
-            <div className="aspect-video w-32 shrink-0 overflow-hidden rounded-lg bg-denim-50">
+            <div className="aspect-video w-32 shrink-0 overflow-hidden rounded-sm border border-line bg-paper">
               {preview && <img src={preview} alt="" className="h-full w-full object-cover" />}
             </div>
             <div className="space-y-1 text-sm">
               <input type="file" accept="image/*" onChange={unggahCover} disabled={mengunggah} className="text-xs" />
-              <p className="text-xs text-muted">
+              <p className="text-xs text-ink-3">
                 {mengunggah ? "Mengunggah..." : "Tanpa cover, thumbnail YouTube dipakai otomatis."}
               </p>
               {form.cover_url && (
-                <button type="button" className="text-xs text-red-600 hover:underline" onClick={hapusCover}>
+                <button type="button" className="text-xs text-signal hover:underline" onClick={hapusCover}>
                   Hapus cover
                 </button>
               )}
@@ -165,14 +165,14 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
         </Label>
         <div className="flex flex-col justify-end gap-2 pb-1 text-sm">
           <label className="flex items-center gap-2">
-            <input type="checkbox" checked={terbit} onChange={(e) => setTerbit(e.target.checked)} /> Tampilkan di situs
+            <input type="checkbox" className="h-4 w-4 accent-brand" checked={terbit} onChange={(e) => setTerbit(e.target.checked)} /> Tampilkan di situs
           </label>
           <label className="flex items-center gap-2">
-            <input type="checkbox" checked={unggulan} onChange={(e) => setUnggulan(e.target.checked)} /> Karya pilihan
+            <input type="checkbox" className="h-4 w-4 accent-brand" checked={unggulan} onChange={(e) => setUnggulan(e.target.checked)} /> Karya pilihan
           </label>
         </div>
 
-        <div className="col-span-2 space-y-3">
+        <div className="sticky -bottom-5 col-span-2 -mx-5 -mb-5 mt-2 space-y-3 border-t border-line bg-white px-5 py-3">
           <PesanError pesan={error} />
           <div className="flex items-center gap-2">
             {awal && (

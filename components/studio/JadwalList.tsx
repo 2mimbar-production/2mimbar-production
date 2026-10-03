@@ -25,34 +25,36 @@ export default function JadwalList({
 
   return (
     <>
-      <ul className="divide-y divide-denim-100 overflow-hidden rounded-2xl border border-denim-100 bg-white">
+      <ul className="divide-y divide-line overflow-hidden rounded-md border border-line bg-white">
         {jadwal.map((j) => (
           <li key={j.id}>
-            <button onClick={() => setEdit(j)} className="flex w-full gap-4 px-4 py-3.5 text-left hover:bg-surface">
-              <div className="w-14 shrink-0 text-center">
-                <p className="font-mono text-lg leading-none text-denim-900">
+            <button onClick={() => setEdit(j)} className="flex w-full gap-4 px-4 py-3.5 text-left transition-colors hover:bg-paper">
+              <div className="w-11 shrink-0 text-center">
+                <p className="font-display text-[1.75rem] leading-none text-ink">
                   {formatTanggal(j.tanggal, { day: "numeric", month: undefined, year: undefined })}
                 </p>
-                <p className="mt-1 text-[11px] uppercase text-muted">
-                  {formatTanggal(j.tanggal, { day: undefined, month: "short", year: undefined, weekday: "short" })}
+                <p className="label-meta mt-1">
+                  {formatTanggal(j.tanggal, { day: undefined, month: "short", year: undefined, weekday: undefined })}
                 </p>
               </div>
-              <span className={`mt-1 w-1 shrink-0 self-stretch rounded-full ${WARNA_TAHAP[j.tahap]}`} />
+              <span className={`w-[3px] shrink-0 self-stretch ${WARNA_TAHAP[j.tahap]}`} />
               <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between gap-2">
-                  <p className={`font-medium text-denim-900 ${j.status === "selesai" ? "line-through opacity-60" : ""}`}>
+                <div className="flex items-start justify-between gap-3">
+                  <p className={`font-medium text-ink ${j.status === "selesai" ? "text-ink-3 line-through" : ""}`}>
                     {j.judul}
                   </p>
                   <Badge nilai={j.status} label={labelDari(STATUS_JADWAL, j.status)} />
                 </div>
-                <p className="mt-0.5 text-xs text-muted">
+                <p className="mt-0.5 text-xs text-ink-3">
+                  <span className="font-mono">{formatTanggal(j.tanggal, { day: undefined, month: undefined, year: undefined, weekday: "long" })}</span>
+                  {" · "}
                   {labelDari(TAHAP_JADWAL, j.tahap)}
                   {j.jam ? ` · ${j.jam}` : ""}
                   {j.tanggal_akhir && j.tanggal_akhir !== j.tanggal ? ` · s.d. ${formatTanggal(j.tanggal_akhir)}` : ""}
                   {tampilkanProyek && j.proyek_id && namaProyek.has(j.proyek_id) ? ` · ${namaProyek.get(j.proyek_id)}` : ""}
                 </p>
                 {(j.lokasi || j.kru) && (
-                  <p className="mt-1 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                  <p className="mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-3">
                     {j.lokasi && (
                       <span className="inline-flex items-center gap-1">
                         <MapPin size={12} /> {j.lokasi}

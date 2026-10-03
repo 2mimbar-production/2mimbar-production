@@ -1,38 +1,62 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Sistem desain Duamimbar Produksi.
+ *
+ * Bahasa visualnya diturunkan dari logo: bidang datar bersudut tegas, satu
+ * warna merek (denim logo), dan huruf condensed yang terasa seperti papan
+ * slate produksi. Lengkungan besar hanya dipakai sebagai aksen, bukan di
+ * setiap kotak.
+ */
 const config: Config = {
   content: ["./app/**/*.{ts,tsx}", "./components/**/*.{ts,tsx}", "./lib/**/*.{ts,tsx}"],
   theme: {
+    // Radius sengaja kecil. Kotak membulat besar adalah ciri template generik.
+    borderRadius: {
+      none: "0",
+      sm: "2px",
+      DEFAULT: "3px",
+      md: "4px",
+      lg: "6px",
+      full: "9999px",
+    },
     extend: {
       colors: {
-        // Denim blue — dikalibrasi persis dari warna logo Duamimbar (#1A2E95)
-        denim: {
-          50: "#F1F2F9",
-          100: "#DDE0EF",
-          300: "#98A1CF",
-          500: "#4858AA", // primary interaktif
-          700: "#1A2E95", // primary utama (header, tombol) — sama persis dengan logo
-          900: "#13205F", // teks utama
+        // Denim dari logo (#1A2E95) dan turunannya.
+        brand: {
+          50: "#EEF0F9",
+          100: "#DCE0F2",
+          300: "#8F9AD4",
+          500: "#3247B8",
+          DEFAULT: "#1A2E95",
+          700: "#1A2E95",
+          800: "#15246F",
+          900: "#101A4F",
         },
-        // Aksen hangat — supaya tidak terasa robotic/kaku
-        gold: {
-          400: "#D9A566",
-          500: "#C68F4A",
+        // Tinta: teks utama dan bidang gelap (sidebar, footer).
+        ink: {
+          DEFAULT: "#0E1433",
+          2: "#3D4361",
+          3: "#6E7389",
+          4: "#9A9EB0",
         },
-        surface: "#F6F8FA",
-        muted: "#6B7A8D",
+        // Kertas: latar halaman, sedikit hangat supaya tidak terasa klinis.
+        paper: "#F4F2ED",
+        line: {
+          DEFAULT: "#E3E0D8",
+          strong: "#CBC7BB",
+        },
+        // Merah "on air": hanya untuk episode tayang dan aksi hapus.
+        signal: "#E0352B",
       },
       fontFamily: {
-        // Satu keluarga font — Inter — di semua tempat. Beda "display" / "sans"
-        // / "mono" sekarang cuma beda gaya (weight, tracking), bukan beda
-        // typeface. Lihat .font-display & .font-mono di globals.css.
-        display: ["var(--font-inter)", "sans-serif"],
-        sans: ["var(--font-inter)", "sans-serif"],
-        mono: ["var(--font-inter)", "sans-serif"],
+        display: ["var(--font-archivo)", "system-ui", "sans-serif"],
+        sans: ["var(--font-archivo)", "system-ui", "sans-serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
       },
-      borderRadius: {
-        signature: "18px 18px 18px 4px", // sudut asimetris — elemen signature kartu
-        mega: "40px", // sudut sangat melengkung — hero & gallery card baru di Home
+      fontSize: {
+        // Label metadata (mono, huruf besar): tanggal, status, kolom tabel.
+        meta: ["0.6875rem", { lineHeight: "1rem", letterSpacing: "0.03em" }],
       },
     },
   },
