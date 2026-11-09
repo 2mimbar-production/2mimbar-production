@@ -13,6 +13,11 @@ export type Karya = {
   unggulan: boolean;
   terbit: boolean;
   urutan: number;
+  /** 5W2H untuk etalase program. */
+  apa: string | null;
+  mengapa: string | null;
+  siapa: string | null;
+  bagaimana: string | null;
   created_at: string;
 };
 
