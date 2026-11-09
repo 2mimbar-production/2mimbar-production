@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { type Kanal, type Proyek, PLATFORM, STATUS_PROYEK, hariIni } from "@/lib/produksi";
@@ -21,6 +21,7 @@ const KOSONG = {
   jadwal_tayang: "",
   target_episode: "",
   catatan: "",
+  karya_id: "",
 };
 
 const KANAL_BARU: Kanal = { platform: "YouTube", nama: "", link: "" };
@@ -32,7 +33,16 @@ export default function ProyekForm({ awal, onClose }: { awal?: Proyek; onClose: 
       : { ...KOSONG }
   );
   const [kanal, setKanal] = useState<Kanal[]>(() => (awal?.kanal?.length ? awal.kanal : [{ ...KANAL_BARU }]));
+  const [daftarKarya, setDaftarKarya] = useState<{ id: string; judul: string; terbit: boolean }[]>([]);
   const { jalankan, loading, error } = useSimpan();
+
+  useEffect(() => {
+    createClient()
+      .from("karya")
+      .select("id, judul, terbit")
+      .order("judul")
+      .then(({ data }) => setDaftarKarya(data ?? []));
+  }, []);
   const set = (k: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
   const setKanalItem = (i: number, k: keyof Kanal, v: string) =>
@@ -145,6 +155,21 @@ export default function ProyekForm({ awal, onClose }: { awal?: Proyek; onClose: 
             <Input type="date" value={form.tanggal_selesai} onChange={set("tanggal_selesai")} />
           </Label>
         )}
+        <Label teks="Tampil di web portofolio program" className="col-span-2">
+          <Select value={form.karya_id} onChange={set("karya_id")}>
+            <option value="">Tidak tampil</option>
+            {daftarKarya.map((k) => (
+              <option key={k.id} value={k.id}>
+                {k.judul}
+                {k.terbit ? "" : " (belum terbit)"}
+              </option>
+            ))}
+          </Select>
+          <span className="mt-1 block text-xs text-muted">
+            Cover, ringkasan, dan deskripsi diambil dari karya ini (atur di menu Portofolio). Episode yang sudah
+            tayang ikut tampil.
+          </span>
+        </Label>
         <Label teks="Catatan / brief" className="col-span-2">
           <Textarea rows={3} value={form.catatan} onChange={set("catatan")} />
         </Label>
