@@ -8,7 +8,7 @@ import { Input, Textarea } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
 import { Label, Modal, PesanError } from "./ui";
 
-const TEKS = ["judul", "slug", "kategori", "klien", "tahun", "ringkasan", "deskripsi", "video_url", "link_url", "cover_url", "urutan"];
+const TEKS = ["judul", "slug", "kategori", "klien", "tahun", "ringkasan", "deskripsi", "video_url", "link_url", "cover_url", "urutan", "apa", "mengapa", "siapa", "bagaimana"];
 
 export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: () => void }) {
   const [form, setForm] = useState<Record<string, string>>(() =>
@@ -117,6 +117,25 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
         <Label teks="Link lain (Instagram, Spotify, dll.)" className="col-span-2">
           <Input type="url" value={form.link_url} onChange={set("link_url")} />
         </Label>
+
+        <fieldset className="col-span-2 space-y-3 rounded-xl border border-denim-100 p-3">
+          <legend className="px-1 text-xs text-muted">5W2H untuk etalase program (opsional)</legend>
+          <p className="text-xs text-muted">
+            When, Where, dan How much terisi otomatis dari jadwal tayang, kanal, dan jumlah episode program.
+          </p>
+          <Label teks="What: program ini tentang apa?">
+            <Textarea rows={2} value={form.apa} onChange={set("apa")} placeholder="Podcast kisah para nabi dengan sentuhan parenting" />
+          </Label>
+          <Label teks="Why: kenapa program ini dibuat?">
+            <Textarea rows={2} value={form.mengapa} onChange={set("mengapa")} placeholder="Menghadirkan kisah Islam yang relevan untuk keluarga muda" />
+          </Label>
+          <Label teks="Who: untuk siapa, dan siapa pengisinya?">
+            <Textarea rows={2} value={form.siapa} onChange={set("siapa")} placeholder="Orang tua muda 25-40 tahun; bersama Ustadz Budi Ashari" />
+          </Label>
+          <Label teks="How: formatnya seperti apa?">
+            <Textarea rows={2} value={form.bagaimana} onChange={set("bagaimana")} placeholder="Video podcast 30-45 menit, dua narasumber" />
+          </Label>
+        </fieldset>
 
         <div className="col-span-2">
           <span className="mb-1 block text-xs text-muted">Cover</span>
