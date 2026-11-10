@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { type Karya, KATEGORI_KARYA, slugify, thumbnailDari } from "@/lib/produksi";
+import { type Karya, type Kru, KATEGORI_KARYA, STATUS_TAYANG, slugify, thumbnailDari } from "@/lib/produksi";
 import { useSimpan } from "@/lib/useSimpan";
-import { Input, Textarea } from "@/components/ui/FormField";
+import { Input, Select, Textarea } from "@/components/ui/FormField";
 import { Button } from "@/components/ui/Button";
 import { Label, Modal, PesanError } from "./ui";
 
@@ -15,6 +16,10 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
     Object.fromEntries(TEKS.map((k) => [k, String((awal as any)?.[k] ?? (k === "kategori" ? "Video" : k === "urutan" ? "0" : ""))]))
   );
   const [terbit, setTerbit] = useState(awal?.terbit ?? false);
+  const [statusTayang, setStatusTayang] = useState<string>(awal?.status_tayang ?? "");
+  const [kru, setKru] = useState<Kru[]>(() => (awal?.kru?.length ? awal.kru : [{ nama: "", peran: "" }]));
+  const setKruItem = (i: number, k: keyof Kru, v: string) =>
+    setKru((list) => list.map((x, j) => (j === i ? { ...x, [k]: v } : x)));
   const [unggulan, setUnggulan] = useState(awal?.unggulan ?? false);
   const [slugManual, setSlugManual] = useState(Boolean(awal));
   const [mengunggah, setMengunggah] = useState(false);
@@ -61,6 +66,8 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
       urutan: Number(form.urutan) || 0,
       terbit,
       unggulan,
+      status_tayang: statusTayang || null,
+      kru: kru.map((x) => ({ nama: x.nama.trim(), peran: x.peran.trim() })).filter((x) => x.nama),
     };
     const ok = await jalankan(() =>
       awal ? supabase.from("karya").update(data).eq("id", awal.id) : supabase.from("karya").insert(data)
@@ -117,6 +124,55 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
         <Label teks="Link lain (Instagram, Spotify, dll.)" className="col-span-2">
           <Input type="url" value={form.link_url} onChange={set("link_url")} />
         </Label>
+
+        <Label teks="Status program di etalase" className="col-span-2">
+          <Select value={statusTayang} onChange={(e) => setStatusTayang(e.target.value)}>
+            <option value="">Otomatis (dari data program)</option>
+            {STATUS_TAYANG.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </Select>
+        </Label>
+
+        <fieldset className="col-span-2 space-y-2 rounded-xl border border-denim-100 p-3">
+          <legend className="px-1 text-xs text-muted">Kru / credit (tampil di etalase)</legend>
+          {kru.map((k, i) => (
+            <div key={i} className="flex gap-2">
+              <Input
+                value={k.peran}
+                onChange={(e) => setKruItem(i, "peran", e.target.value)}
+                placeholder="Peran, mis. Host"
+                aria-label="Peran"
+                className="!w-36 shrink-0"
+              />
+              <Input
+                value={k.nama}
+                onChange={(e) => setKruItem(i, "nama", e.target.value)}
+                placeholder="Nama"
+                aria-label="Nama"
+                className="min-w-0 flex-1"
+              />
+              <button
+                type="button"
+                onClick={() => setKru((list) => list.filter((_, j) => j !== i))}
+                className="shrink-0 rounded-lg p-2 text-muted hover:bg-surface"
+                aria-label="Hapus kru"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={() => setKru((list) => [...list, { nama: "", peran: "" }])}
+            className="flex items-center gap-1 text-sm text-denim-500 hover:underline"
+          >
+            <Plus size={14} /> Tambah kru
+          </button>
+          <p className="text-xs text-muted">Satu orang dengan beberapa peran: tulis di satu baris, mis. "Produser, Editor".</p>
+        </fieldset>
 
         <fieldset className="col-span-2 space-y-3 rounded-xl border border-denim-100 p-3">
           <legend className="px-1 text-xs text-muted">5W2H untuk etalase program (opsional)</legend>
