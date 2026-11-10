@@ -26,8 +26,8 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // Halaman portofolio (/, /karya/...) terbuka untuk umum. Yang wajib
-  // login cuma area kerja divisi di /studio.
+  // Web ini khusus Studio: semua halaman /studio wajib login.
+  // Portofolio publik ada di web etalase (repo 2mimbar-production/portofolio).
   if (!user && request.nextUrl.pathname.startsWith("/studio")) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";

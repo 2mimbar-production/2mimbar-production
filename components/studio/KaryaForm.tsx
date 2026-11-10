@@ -218,7 +218,7 @@ export default function KaryaForm({ awal, onClose }: { awal?: Karya; onClose: ()
         </Label>
         <div className="flex flex-col justify-end gap-2 pb-1 text-sm">
           <label className="flex items-center gap-2">
-            <input type="checkbox" checked={terbit} onChange={(e) => setTerbit(e.target.checked)} /> Tampilkan di situs
+            <input type="checkbox" checked={terbit} onChange={(e) => setTerbit(e.target.checked)} /> Tampilkan di etalase
           </label>
           <label className="flex items-center gap-2">
             <input type="checkbox" checked={unggulan} onChange={(e) => setUnggulan(e.target.checked)} /> Karya pilihan

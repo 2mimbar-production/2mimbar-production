@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, FolderKanban, CalendarDays, NotebookPen, Clapperboard, Globe } from "lucide-react";
 import LogoutButton from "@/components/LogoutButton";
 
+const ETALASE = process.env.NEXT_PUBLIC_ETALASE_URL || "https://2mimbar-portofolio.vercel.app";
+
 const NAV = [
   { href: "/studio", label: "Ringkasan", icon: LayoutDashboard },
   { href: "/studio/proyek", label: "Program", icon: FolderKanban },
@@ -42,12 +44,12 @@ export default function StudioNav({ email }: { email: string }) {
             </Link>
           ))}
           <Link
-            href="/"
+            href={ETALASE}
             target="_blank"
             className="mt-4 flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted hover:bg-surface"
           >
             <Globe size={18} strokeWidth={1.75} />
-            Lihat situs
+            Lihat etalase
           </Link>
         </nav>
         <div className="flex items-center justify-between gap-2 border-t border-denim-100 px-4 py-3">

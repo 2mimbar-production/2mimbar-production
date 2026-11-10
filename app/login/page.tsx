@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
+const ETALASE = process.env.NEXT_PUBLIC_ETALASE_URL || "https://2mimbar-portofolio.vercel.app";
+
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -77,9 +79,9 @@ export default function LoginPage() {
         </form>
 
         <p className="text-xs text-muted mt-6">
-          <Link href="/" className="text-denim-700 underline">
-            Kembali ke portofolio
-          </Link>
+          <a href={ETALASE} className="text-denim-700 underline">
+            Lihat etalase program
+          </a>
         </p>
       </div>
     </main>
