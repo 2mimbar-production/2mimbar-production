@@ -18,8 +18,21 @@ export type Karya = {
   mengapa: string | null;
   siapa: string | null;
   bagaimana: string | null;
+  /** Status di etalase; null = otomatis dari data program. */
+  status_tayang: StatusTayang | null;
+  kru: Kru[];
   created_at: string;
 };
+
+export type StatusTayang = "berjalan" | "segera" | "tamat";
+export const STATUS_TAYANG: { value: StatusTayang; label: string }[] = [
+  { value: "berjalan", label: "Sedang berjalan (on going)" },
+  { value: "segera", label: "Segera tayang" },
+  { value: "tamat", label: "Tamat" },
+];
+
+/** Satu baris credit kru di etalase. */
+export type Kru = { nama: string; peran: string };
 
 export type StatusProyek = "ide" | "praproduksi" | "produksi" | "pascaproduksi" | "selesai" | "batal";
 
