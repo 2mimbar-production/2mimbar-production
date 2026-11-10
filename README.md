@@ -1,14 +1,18 @@
-# Duamimbar Produksi
+# Studio Duamimbar
 
-Web Divisi Produksi Duamimbar. Isinya dua bagian:
+Web kerja Divisi Produksi Duamimbar (wajib login). Portofolio publik ada di web
+**etalase** terpisah: repo `2mimbar-production/portofolio`
+(https://2mimbar-portofolio.vercel.app), yang membaca data dari Studio ini.
 
-- **Portofolio publik** (`/`, `/karya/[slug]`): daftar produk media yang sudah diproduksi. Tanpa login.
-- **Studio** (`/studio`, wajib login): alat kerja manajer produksi.
+`/` diarahkan ke `/studio`; link lama `/karya/[slug]` diteruskan ke
+`/program/[slug]` di etalase (atur alamatnya lewat `NEXT_PUBLIC_ETALASE_URL`).
+
+- **Studio** (`/studio`): alat kerja manajer produksi.
   - Ringkasan: proyek berjalan, jadwal 7 hari ke depan, laporan terakhir.
   - Proyek: status dari ide sampai selesai, tenggat, PIC, brief.
   - Jadwal: kalender bulanan per tahap (praproduksi, shooting, editing, review, rilis).
   - Laporan: catatan kerja harian per proyek, bisa difilter per bulan/proyek dan dicetak ke PDF.
-  - Portofolio: tambah/ubah karya, unggah cover, atur mana yang tampil di situs.
+  - Portofolio: tambah/ubah karya, unggah cover, status, kru, 5W2H, dan atur mana yang tampil di etalase.
 
 ## Setup
 
@@ -25,12 +29,11 @@ Web Divisi Produksi Duamimbar. Isinya dua bagian:
    ```
    NEXT_PUBLIC_SUPABASE_URL=
    NEXT_PUBLIC_SUPABASE_ANON_KEY=
-   NEXT_PUBLIC_KONTAK_EMAIL=   # opsional, tampil di footer portofolio
-   NEXT_PUBLIC_KONTAK_WA=      # opsional, format 62812xxxx
+   NEXT_PUBLIC_ETALASE_URL=    # opsional, default https://2mimbar-portofolio.vercel.app
    ```
    Env var Google Sheets (`SHEET_ID_*`, `GOOGLE_*`) dan `SUPABASE_SERVICE_ROLE_KEY` tidak dipakai lagi.
 
-Halaman portofolio di-cache 60 detik, jadi perubahan dari Studio muncul di situs paling lambat semenit kemudian.
+Etalase men-cache data 60 detik, jadi perubahan dari Studio muncul di etalase paling lambat semenit kemudian.
 
 ## Deploy ke Vercel
 

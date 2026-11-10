@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { ExternalLink, Plus, Star } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { type Karya, thumbnailDari } from "@/lib/produksi";
@@ -10,6 +9,8 @@ import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { PageHeader, PesanError } from "./ui";
 import KaryaForm from "./KaryaForm";
+
+const ETALASE = process.env.NEXT_PUBLIC_ETALASE_URL || "https://2mimbar-portofolio.vercel.app";
 
 export default function PortofolioBoard({ karya }: { karya: Karya[] }) {
   const [edit, setEdit] = useState<Karya | "baru" | null>(null);
@@ -25,12 +26,12 @@ export default function PortofolioBoard({ karya }: { karya: Karya[] }) {
     <>
       <PageHeader
         judul="Portofolio"
-        sub={`${terbit} dari ${karya.length} karya tampil di situs publik.`}
+        sub={`${terbit} dari ${karya.length} karya tampil di etalase program.`}
         aksi={
           <>
-            <Link href="/" target="_blank" className="flex items-center gap-1.5 rounded-lg border border-denim-100 px-3.5 py-2 text-sm hover:border-denim-300">
-              <ExternalLink size={15} /> Lihat situs
-            </Link>
+            <a href={ETALASE} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 rounded-lg border border-denim-100 px-3.5 py-2 text-sm hover:border-denim-300">
+              <ExternalLink size={15} /> Lihat etalase
+            </a>
             <Button onClick={() => setEdit("baru")} className="flex items-center gap-1.5">
               <Plus size={16} /> Karya baru
             </Button>
@@ -40,7 +41,7 @@ export default function PortofolioBoard({ karya }: { karya: Karya[] }) {
       <PesanError pesan={error} />
 
       {karya.length === 0 ? (
-        <EmptyState message="Belum ada karya. Tambahkan produk media pertama untuk ditampilkan di situs." />
+        <EmptyState message="Belum ada karya. Tambahkan produk media pertama untuk ditampilkan di etalase." />
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {karya.map((k) => {

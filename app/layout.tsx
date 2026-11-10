@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Duamimbar Produksi",
-  description: "Portofolio karya media Divisi Produksi Duamimbar.",
+  title: "Studio Duamimbar",
+  description: "Alat kerja Divisi Produksi Duamimbar.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
